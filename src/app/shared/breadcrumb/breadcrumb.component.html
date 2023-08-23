@@ -1,0 +1,17 @@
+<nav
+  *ngIf="breadcrumbs$ | async as breadcrumbs"
+  style="--bs-breadcrumb-divider: '>'"
+  aria-label="breadcrumb"
+>
+  <h5><strong>{{ breadcrumbs[breadcrumbs.length - 1].label }}</strong></h5>
+  <ol class="breadcrumb">
+    <li
+      *ngFor="let breadcrumb of breadcrumbs"
+      class="breadcrumb-item"
+      [routerLink]="breadcrumb.url"
+      routerLinkActive="'active'"
+    >
+      {{ breadcrumb.label }}
+    </li>
+  </ol>
+</nav>

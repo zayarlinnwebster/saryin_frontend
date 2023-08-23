@@ -1,0 +1,28 @@
+<div class="card p-3">
+  <div
+    ngbNav
+    #nav="ngbNav"
+    [activeId]="activeFragment$ | async"
+    class="nav-tabs mb-3"
+  >
+    <ng-container [ngbNavItem]="'စာရင်း'">
+      <button ngbNavLink routerLink="." [fragment]="'စာရင်း'">
+        နယ်ပို့စာရင်း
+      </button>
+      <ng-template ngbNavContent>
+        <app-invoice-list></app-invoice-list>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [ngbNavItem]="'အသေးစိတ်'">
+      <button ngbNavLink routerLink="." [fragment]="'အသေးစိတ်'">
+        အသေးစိတ်
+      </button>
+      <ng-template ngbNavContent>
+        <app-invoice-detail-list></app-invoice-detail-list>
+      </ng-template>
+    </ng-container>
+  </div>
+
+  <div [ngbNavOutlet]="nav"></div>
+</div>

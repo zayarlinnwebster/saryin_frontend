@@ -1,0 +1,92 @@
+<div class="modal-header">
+    <h5 class="modal-title">သိုလှောင်ရုံနာမည်အသစ် သိမ်းဆည်းပါ။</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="activeModal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <form [formGroup]="storeForm" (ngSubmit)="onSubmit()">
+    <div class="modal-body">
+      <div class="mb-3">
+        <label for="storeName" class="form-label">သိုလှောင်ရုံနာမည်</label>
+        <input
+          type="text"
+          class="form-control"
+          id="storeName"
+          formControlName="storeName"
+          placeholder="သိုလှောင်ရုံနာမည်ထည့်သွင်းပါ။"
+          [ngClass]="{ 'is-invalid': storeName.invalid && storeName.touched }"
+          ngbAutofocus
+        />
+        <div
+          *ngIf="storeName.invalid && storeName.touched"
+          id="storeName"
+          class="invalid-feedback"
+        >
+          <small *ngIf="storeName.hasError('required')">
+            သိုလှောင်ရုံနာမည်ဖြည့်ရန်လိုအပ်ပါတယ်။
+          </small>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="phoneNo" class="form-label">ဖုန်းနံပါတ်</label>
+        <input
+          type="text"
+          class="form-control"
+          id="phoneNo"
+          placeholder="ဖုန်းနံပါတ်ထည့်သွင်းပါ။"
+          formControlName="phoneNo"
+          [ngClass]="{ 'is-invalid': phoneNo.invalid && phoneNo.touched }"
+        />
+      </div>
+  
+      <div class="mb-3">
+        <label for="address" class="form-label">လိပ်စာ</label>
+        <textarea
+          class="form-control"
+          id="address"
+          formControlName="address"
+          placeholder="လိပ်စာထည့်သွင်းပါ။"
+          rows="4"
+          cols="50"
+          [ngClass]="{ 'is-invalid': address.invalid && address.touched }"
+        >
+        </textarea>
+      </div>
+    </div>
+  
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-outline-dark"
+        (click)="activeModal.dismiss('Cross click')"
+      >
+        ပိတ်မည်။
+      </button>
+      <button
+        *ngIf="!(storeService.createLoading$ | async)"
+        type="submit"
+        class="btn btn-outline-primary"
+        [disabled]="storeForm.invalid"
+      >
+        သိမ်းဆည်းမည်။
+      </button>
+      <button
+        *ngIf="storeService.createLoading$ | async"
+        class="btn btn-primary"
+        type="button"
+        disabled
+      >
+        <span
+          class="spinner-border spinner-border-sm"
+          role="status"
+          aria-hidden="true"
+        ></span>
+        လုပ်ဆောင်နေသည်
+      </button>
+    </div>
+  </form>
+  

@@ -1,0 +1,38 @@
+<div class="modal-header">
+  <h5 class="modal-title">{{ alertModalConfig.modalTitle }}</h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.close('cross')"
+  ></button>
+</div>
+<div class="modal-body">
+  <ngb-alert
+    [dismissible]="false"
+    [type]="alertType"
+    *ngFor="let message of messages"
+  >
+    {{ message }}
+  </ngb-alert>
+</div>
+<div *ngIf="!alertModalConfig.hideFooter" class="modal-footer">
+  <button
+    *ngIf="!alertModalConfig.hideCloseButton"
+    type="button"
+    class="btn btn-outline-dark"
+    (click)="activeModal.close('close')"
+    [disabled]="alertModalConfig.disableCloseButton"
+  >
+    {{ alertModalConfig.closeButtonLabel }}
+  </button>
+  <button
+    *ngIf="!alertModalConfig.hideDismissButton"
+    type="button"
+    class="btn btn-outline-primary"
+    (click)="activeModal.dismiss('dismiss')"
+    [disabled]="alertModalConfig.disableDismissButton"
+  >
+    {{ alertModalConfig.dismissButtonLabel }}
+  </button>
+</div>

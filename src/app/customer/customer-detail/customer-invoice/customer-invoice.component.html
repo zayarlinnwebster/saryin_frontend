@@ -1,0 +1,83 @@
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col" sortable="invoice.invoiceDate" (sort)="onSort($event)">
+          ရက်စွဲ
+        </th>
+        <th scope="col" sortable="vendor.vendorName" (sort)="onSort($event)">
+          ပွဲရုံအမည်
+        </th>
+        <th scope="col" sortable="item.itemName" (sort)="onSort($event)">ငါးအမည်</th>
+        <th>အရေအတွက်</th>
+        <th>စျေးနှုန်း</th>
+        <th>အလေးချိန်</th>
+        <th colspan="100%">စုစုပေါင်းတန်ဖိုး</th>
+      </tr>
+    </thead>
+
+    <ng-container
+      *ngIf="!(customerDetailService.invoiceListLoading | async); else loading"
+    >
+      <tbody *ngIf="invoiceDetails$ | async as invoiceDetails">
+        <ng-container *ngIf="invoiceDetails.length > 0; else noInvoiceData">
+          <ng-container
+            *ngFor="let invoiceDetail of invoiceDetails; let i = index"
+          >
+            <tr>
+              <th scope="row">{{ i + 1 }}</th>
+              <td>
+                {{ invoiceDetail.invoice.invoiceDate | date : "YYYY-MM-dd" }}
+              </td>
+              <td>
+                <a
+                  class="link-dark link-underline link-underline-opacity-0"
+                  [routerLink]="['/vendor', invoiceDetail.vendor?.id]"
+                  [fragment]="'သွင်းငွေ'"
+                  >{{ invoiceDetail.vendor?.vendorName }}</a
+                >
+              </td>
+              <td>{{ invoiceDetail.item?.itemName }}</td>
+              <td>{{ invoiceDetail.qty | number }}</td>
+              <td>{{ invoiceDetail.unitPrice | number }}</td>
+              <td>{{ invoiceDetail.weight }}</td>
+              <td colspan="100%">
+                {{ invoiceDetail.totalPrice | number }}
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+
+        <ng-template #noInvoiceData>
+          <tr emptyRow></tr>
+        </ng-template>
+      </tbody>
+    </ng-container>
+
+    <ng-template #loading>
+      <tbody loadingRow></tbody>
+    </ng-template>
+  </table>
+</div>
+
+<div class="d-flex flex-column flex-md-row justify-content-between p-2">
+  <ngb-pagination
+    [collectionSize]="(total$ | async)!"
+    [(page)]="customerDetailService.page"
+    [pageSize]="customerDetailService.limit"
+    [maxSize]="5"
+  >
+  </ngb-pagination>
+
+  <ng-select
+    style="width: auto"
+    name="limit"
+    [items]="limitOptions"
+    [bindLabel]="'label'"
+    [bindValue]="'value'"
+    [clearable]="false"
+    [(ngModel)]="customerDetailService.limit"
+  >
+  </ng-select>
+</div>

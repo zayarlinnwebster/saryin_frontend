@@ -1,0 +1,195 @@
+<div class="modal-header">
+  <h5 class="modal-title">အသုံးပြုသူအသစ် သိမ်းဆည်းပါ။</h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('Cross click')"
+  ></button>
+</div>
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+  <div class="modal-body">
+    <div class="mb-3">
+      <label for="username" class="form-label">သုံးစွဲသူအမည်</label>
+      <input
+        type="text"
+        class="form-control"
+        id="username"
+        formControlName="username"
+        placeholder="သုံးစွဲသူအမည်ထည့်သွင်းပါ။"
+        [ngClass]="{
+          'is-invalid': username.invalid && username.touched
+        }"
+        ngbAutofocus
+      />
+      <div
+        *ngIf="username.invalid && username.touched"
+        id="username"
+        class="invalid-feedback"
+      >
+        <small *ngIf="username.hasError('required')">
+          သုံးစွဲသူအမည်ထည့်သွင်းရန်လိုအပ်ပါတယ်။
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="passowrd">လျှို့ဝှက်နံပါတ်</label>
+      <div class="input-group">
+        <input
+          [type]="showPassword ? 'text' : 'password'"
+          id="password"
+          class="form-control"
+          placeholder="လျှို့ဝှက်နံပါတ်ထည့်သွင်းပါ။"
+          formControlName="password"
+          [ngClass]="{
+              'is-invalid': password.touched && password.invalid,
+            }"
+        />
+        <span
+          class="input-group-text"
+          type="button"
+          id="passwordButton"
+          (click)="showPassword = !showPassword"
+        >
+          <i
+            class="bi"
+            [ngClass]="showPassword ? 'bi-eye' : 'bi-eye-slash'"
+          ></i>
+        </span>
+        <div
+          *ngIf="password.invalid && password.touched"
+          id="password"
+          class="invalid-feedback"
+        >
+          <small
+            *ngIf="
+              !password.hasError('required') &&
+              (password.hasError('minlength') ||
+                password.hasError('hasNumber') ||
+                password.hasError('hasCapitalCase') ||
+                password.hasError('hasSmallCase'))
+            "
+          >
+            <span class="bi bi-exclamation-circle-fill text-danger"></span>
+            လျှို့ဝှက်နံပါတ်သည် စာလုံးအကြီးအသေးပါဝင်ရပါမည်။<br />
+          </small>
+          <small *ngIf="password.hasError('required')">
+            <span class="bi bi-exclamation-circle-fill text-danger"></span>
+            လျှို့ဝှက်နံပါတ် ထည့်သွင်းရန်လိုအပ်သည်။<br
+          /></small>
+          <small
+            *ngIf="
+              password.hasError('minlength') && !password.hasError('required')
+            "
+            >• အနည်းဆုံး အက္ခရာစာလုံး ၈ လုံး<br />
+          </small>
+          <small
+            *ngIf="
+              password.hasError('hasNumber') && !password.hasError('required')
+            "
+            >• အနည်းဆုံး ဂဏန်းအက္ခရာစာလုံး ၁ လုံး<br />
+          </small>
+          <small
+            *ngIf="
+              password.hasError('hasCapitalCase') &&
+              !password.hasError('required')
+            "
+            >• အနည်းဆုံး စာလုံးအကြီး ၁ လုံး<br />
+          </small>
+          <small
+            *ngIf="
+              password.hasError('hasSmallCase') &&
+              !password.hasError('required')
+            "
+            >• အနည်းဆုံး စာလုံး ၁ လုံး<br />
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label" for="confirmPassword"
+        >အတည်ပြုလျှို့ဝှက်နံပါတ်</label
+      >
+      <div class="input-group">
+        <input
+          [type]="showConfirmPassword ? 'text' : 'password'"
+          id="confirmPassword"
+          class="form-control"
+          placeholder="အတည်ပြုလျှို့ဝှက်နံပါတ် ထည့်သွင်းပါ။"
+          formControlName="confirmPassword"
+          [ngClass]="{
+            'is-invalid': confirmPassword.touched && confirmPassword.invalid,
+          }"
+        />
+        <span
+          class="input-group-text"
+          type="button"
+          id="passwordButton"
+          (click)="showConfirmPassword = !showConfirmPassword"
+        >
+          <i
+            class="bi"
+            [ngClass]="showConfirmPassword ? 'bi-eye' : 'bi-eye-slash'"
+          ></i>
+        </span>
+        <div
+          *ngIf="confirmPassword.invalid && confirmPassword.touched"
+          id="confirmPassword"
+          class="invalid-feedback"
+        >
+          <small *ngIf="confirmPassword.hasError('required')">
+            <span class="bi bi-exclamation-circle-fill text-danger"></span>
+            အတည်ပြုလျှို့ဝှက်နံပါတ်ထည့်သွင်းရန်လိုအပ်ပါသည်။
+          </small>
+          <small *ngIf="confirmPassword.hasError('noPasswordMatch')">
+            <span class="bi bi-exclamation-circle-fill text-danger"></span>
+            လျှို့ဝှက်နံပါတ်နှင့် အတည်ပြု လျှို့ဝှက်နံပါတ် မကိုက်ညီပါ။
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-check">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        id="isActive"
+        formControlName="isActive"
+      />
+      <label class="form-check-label" for="isActive">အသုံးပြုခွင့်</label>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="activeModal.dismiss('Cross click')"
+    >
+      ပိတ်မည်။
+    </button>
+    <button
+      *ngIf="!(userService.createLoading$ | async)"
+      type="submit"
+      class="btn btn-outline-primary"
+      [disabled]="userForm.invalid"
+    >
+      သိမ်းဆည်းမည်။
+    </button>
+    <button
+      *ngIf="userService.createLoading$ | async"
+      class="btn btn-primary"
+      type="button"
+      disabled
+    >
+      <span
+        class="spinner-border spinner-border-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      လုပ်ဆောင်နေသည်
+    </button>
+  </div>
+</form>

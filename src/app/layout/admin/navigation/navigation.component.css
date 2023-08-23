@@ -1,0 +1,9 @@
+.nav-link {
+    display: inline;
+}
+
+@media only screen and (max-width: 992px) {
+    .nav-item:hover {
+        background-color: lightgray;
+    }
+}

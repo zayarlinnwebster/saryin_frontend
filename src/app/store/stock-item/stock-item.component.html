@@ -1,0 +1,244 @@
+<div class="modal-header">
+  <h5 class="modal-title">လှောင်ကုန်အသစ် သိမ်းဆည်းပါ။</h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('Cross click')"
+  ></button>
+</div>
+<form [formGroup]="stockItemForm" (ngSubmit)="onSubmit()">
+  <div class="modal-body">
+    <div class="mb-3">
+      <label for="storedDate" class="form-label">ရက်စွဲ (သွင်း)</label>
+      <div class="input-group">
+        <input
+          class="form-control"
+          placeholder="yyyy-mm-dd"
+          name="storedDate"
+          ngbDatepicker
+          #d="ngbDatepicker"
+          formControlName="storedDate"
+          [ngClass]="{
+            'is-invalid': storedDate.invalid && storedDate.touched
+          }"
+        />
+        <button
+          class="btn btn-outline-secondary bi bi-calendar3"
+          (click)="d.toggle()"
+          type="button"
+        ></button>
+
+        <div
+          *ngIf="storedDate.invalid && storedDate.touched"
+          id="storedDate"
+          class="invalid-feedback"
+        >
+          <small *ngIf="storedDate.hasError('required')">
+            ရက်စွဲဖြည့်ရန်လိုအပ်ပါတယ်။
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="storeId" class="form-label">သိုလှောင်ရုံအမည်</label>
+      <ng-select
+        id="storeId"
+        [loading]="(storeService.dropdownLoading$ | async) ?? false"
+        [items]="dropdownStore$ | async"
+        [bindLabel]="'storeName'"
+        [bindValue]="'id'"
+        placeholder="သိုလှောင်ရုံအမည် ရွေးပါ။"
+        [typeahead]="storeService.dropdownSearch$"
+        formControlName="storeId"
+        [ngClass]="{
+          'is-invalid': storeId.invalid && storeId.touched
+        }"
+        autofocus
+      >
+      </ng-select>
+      <div
+        *ngIf="storeId.invalid && storeId.touched"
+        id="storeId"
+        class="invalid-feedback"
+      >
+        <small *ngIf="storeId.hasError('required')">
+          သိုလှောင်ရုံအမည်ရွေးရန်လိုအပ်ပါတယ်။
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="customerId" class="form-label">ကုန်သည်အမည်</label>
+      <ng-select
+        id="customerId"
+        [loading]="(customerService.dropdownLoading$ | async) ?? false"
+        [items]="dropdownCustomers$ | async"
+        [bindLabel]="'fullName'"
+        [bindValue]="'id'"
+        placeholder="ကုန်သည်အမည် ရွေးပါ။"
+        [typeahead]="customerService.dropdownSearch$"
+        formControlName="customerId"
+        [ngClass]="{
+          'is-invalid': customerId.invalid && customerId.touched
+        }"
+      >
+      </ng-select>
+      <div
+        *ngIf="customerId.invalid && customerId.touched"
+        id="customerId"
+        class="invalid-feedback"
+      >
+        <small *ngIf="customerId.hasError('required')">
+          ကုန်သည်အမည်ရွေးရန်လိုအပ်ပါတယ်။
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="itemId" class="form-label">ငါးအမည်</label>
+      <ng-select
+        id="itemId"
+        [loading]="(itemService.dropdownLoading$ | async) ?? false"
+        [items]="dropdownItem$ | async"
+        [bindLabel]="'itemName'"
+        [bindValue]="'id'"
+        placeholder="ငါးအမည် ရွေးပါ။"
+        [typeahead]="itemService.dropdownSearch$"
+        formControlName="itemId"
+        [ngClass]="{
+          'is-invalid': itemId.invalid && itemId.touched
+        }"
+      >
+      </ng-select>
+      <div
+        *ngIf="itemId.invalid && itemId.touched"
+        id="itemId"
+        class="invalid-feedback"
+      >
+        <small *ngIf="itemId.hasError('required')">
+          ငါးအမည်ရွေးရန်လိုအပ်ပါတယ်။
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="unitPrice" class="form-label">စျေးနှုန်း</label>
+      <input
+        class="form-control"
+        type="number"
+        id="unitPrice"
+        formControlName="unitPrice"
+        placeholder="စျေးနှုန်းထည့်သွင်းပါ။"
+        [ngClass]="{
+          'is-invalid': unitPrice.invalid && unitPrice.touched
+        }"
+      />
+      <div *ngIf="unitPrice.invalid && unitPrice.touched" id="unitPrice" class="invalid-feedback">
+        <small *ngIf="unitPrice.hasError('required')">
+          စျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
+        </small>
+        <small *ngIf="unitPrice.hasError('min')">
+          စျေးနှုန်းသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="qty" class="form-label">အရေအတွက်</label>
+      <input
+        class="form-control"
+        type="number"
+        id="qty"
+        formControlName="qty"
+        placeholder="အရေအတွက်ထည့်သွင်းပါ။"
+        [ngClass]="{
+          'is-invalid': qty.invalid && qty.touched
+        }"
+      />
+      <div *ngIf="qty.invalid && qty.touched" id="qty" class="invalid-feedback">
+        <small *ngIf="qty.hasError('required')">
+          အရေအတွက်ထည်းသွင်းရန်လိုအပ်ပါသည်။
+        </small>
+        <small *ngIf="qty.hasError('min')">
+          အရေအတွက်သည် 1 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="weight" class="form-label">အလေးချိန်</label>
+      <input
+        type="number"
+        class="form-control"
+        id="weight"
+        formControlName="weight"
+        placeholder="အလေးချိန်ထည့်သွင်းပါ။"
+        [ngClass]="{
+          'is-invalid': weight.invalid && weight.touched
+        }"
+      />
+      <div
+        *ngIf="weight.invalid && weight.touched"
+        id="weight"
+        class="invalid-feedback"
+      >
+        <small *ngIf="weight.hasError('required')">
+          အလေးချိန်ထည့်သွင်းရန်လိုအပ်ပါသည်။
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="totalPrice" class="form-label">စုစုပေါင်းစျေးနှုန်း</label>
+      <input
+        class="form-control"
+        type="number"
+        id="totalPrice"
+        formControlName="totalPrice"
+        placeholder="စုစုပေါင်းစျေးနှုန်းထည့်သွင်းပါ။"
+        [ngClass]="{
+          'is-invalid': totalPrice.invalid && totalPrice.touched
+        }"
+      />
+      <div *ngIf="totalPrice.invalid && totalPrice.touched" id="totalPrice" class="invalid-feedback">
+        <small *ngIf="totalPrice.hasError('required')">
+          စုစုပေါင်းစျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
+        </small>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="activeModal.dismiss('Cross click')"
+    >
+      ပိတ်မည်။
+    </button>
+    <button
+      *ngIf="!(stockItemService.createLoading$ | async)"
+      type="submit"
+      class="btn btn-outline-primary"
+      [disabled]="stockItemForm.invalid"
+    >
+      သိမ်းဆည်းမည်။
+    </button>
+    <button
+      *ngIf="stockItemService.createLoading$ | async"
+      class="btn btn-primary"
+      type="button"
+      disabled
+    >
+      <span
+        class="spinner-border spinner-border-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      လုပ်ဆောင်နေသည်
+    </button>
+  </div>
+</form>

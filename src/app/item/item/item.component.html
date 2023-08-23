@@ -1,0 +1,67 @@
+<div class="modal-header">
+  <h5 class="modal-title">ငါးနာမည်အသစ် သိမ်းဆည်းပါ။</h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('Cross click')"
+  ></button>
+</div>
+<form [formGroup]="itemForm" (ngSubmit)="onSubmit()">
+  <div class="modal-body">
+    <div class="mb-3">
+      <label for="itemName" class="form-label">ငါးနာမည်</label>
+      <input
+        type="text"
+        class="form-control"
+        id="itemName"
+        formControlName="itemName"
+        placeholder="ငါးနာမည်ထည့်သွင်းပါ။"
+        [ngClass]="{
+          'is-invalid': itemName.invalid && itemName.touched
+        }"
+        ngbAutofocus
+      />
+      <div
+        *ngIf="itemName.invalid && itemName.touched"
+        id="itemName"
+        class="invalid-feedback"
+      >
+        <small *ngIf="itemName.hasError('required')">
+          ငါးနာမည်ဖြည့်ရန်လိုအပ်ပါတယ်။
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="activeModal.dismiss('Cross click')"
+    >
+      ပိတ်မည်။
+    </button>
+    <button
+      *ngIf="!(itemService.createLoading$ | async)"
+      type="submit"
+      class="btn btn-outline-primary"
+      [disabled]="itemForm.invalid"
+    >
+      သိမ်းဆည်းမည်။
+    </button>
+    <button
+      *ngIf="itemService.createLoading$ | async"
+      class="btn btn-primary"
+      type="button"
+      disabled
+    >
+      <span
+        class="spinner-border spinner-border-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      လုပ်ဆောင်နေသည်
+    </button>
+  </div>
+</form>

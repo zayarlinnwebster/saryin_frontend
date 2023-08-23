@@ -1,0 +1,240 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <h6 class="card-title fw-bold mb-3">ရှာဖွေမှုပုံစံ</h6>
+    <div class="row">
+      <div class="col-md-3">
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="search"
+            placeholder="ရှာဖွေရန်...."
+            [(ngModel)]="mainDashboardService.searchList"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="mb-3">
+          <div class="dp-hidden position-absolute">
+            <div class="input-group">
+              <input
+                name="datepicker"
+                class="form-control"
+                ngbDatepicker
+                #datepicker="ngbDatepicker"
+                [autoClose]="'outside'"
+                (dateSelect)="mainDashboardService.onDateSelection($event)"
+                [displayMonths]="2"
+                [dayTemplate]="t"
+                outsideDays="hidden"
+                [startDate]="dateRangeService.fromDate!"
+                tabindex="-1"
+              />
+              <ng-template #t let-date let-focused="focused">
+                <span
+                  class="custom-day"
+                  [class.focused]="focused"
+                  [class.range]="dateRangeService.isRange(date)"
+                  [class.faded]="
+                    dateRangeService.isHovered(date) ||
+                    dateRangeService.isInside(date)
+                  "
+                  (mouseenter)="dateRangeService.hoveredDate = date"
+                  (mouseleave)="dateRangeService.hoveredDate = null"
+                >
+                  {{ date.day }}
+                </span>
+              </ng-template>
+            </div>
+          </div>
+          <div class="input-group">
+            <input
+              #dpFromDate
+              class="form-control"
+              placeholder="ရက်စွဲအပိုင်းအခြားကို ရွေးပါ..."
+              name="dpFromDate"
+              [value]="
+                dateRangeService.formatter.format(dateRangeService.fromDate) +
+                ' မှ ' +
+                dateRangeService.formatter.format(dateRangeService.toDate)
+              "
+              [disabled]="true"
+            />
+            <button
+              class="btn btn-outline-secondary bi bi-calendar3"
+              (click)="datepicker.toggle()"
+              type="button"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xl-6 mb-3">
+    <div
+      class="card"
+      *ngIf="!(mainDashboardService.itemChartLoading$ | async); else loading"
+    >
+      <div class="card-body p-3">
+        <div class="chart-container">
+          <apx-chart
+            *ngIf="itemChartData$ | async as chartData"
+            [title]="{
+              text:
+                dateRangeService.formatter.format(dateRangeService.fromDate) +
+                ' မှ ' +
+                dateRangeService.formatter.format(dateRangeService.toDate) +
+                ' ထိနယ်ပို့ကုန်များ'
+            }"
+            [series]="chartData.data"
+            [chart]="{
+              type: itemChartOptions.chart.type,
+              height: 50 * chartData.labels.length,
+              fontFamily: itemChartOptions.chart.fontFamily,
+              animations: itemChartOptions.chart.animations,
+            }"
+            [xaxis]="{ categories: chartData.labels,  }"
+            [noData]="itemChartOptions.noData"
+            [plotOptions]="itemChartOptions.plotOptions"
+          ></apx-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-6 mb-3">
+    <div
+      class="card"
+      *ngIf="!(mainDashboardService.totalChartLoading$ | async); else loading"
+    >
+      <div class="card-body p-3">
+        <div class="chart-container">
+          <apx-chart
+            *ngIf="totalChartData$ | async as chartData"
+            [title]="{
+              text:
+                dateRangeService.formatter.format(dateRangeService.fromDate) +
+                ' မှ ' +
+                dateRangeService.formatter.format(dateRangeService.toDate) +
+                ' ထိအထွေထွေစာရင်း'
+            }"
+            [series]="chartData.data"
+            [labels]="chartData.labels"
+            [chart]="totalChartOptions.chart"
+            [noData]="totalChartOptions.noData"
+          ></apx-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="card mb-3"
+  *ngIf="!(mainDashboardService.amountChartLoading$ | async); else loading"
+>
+  <div class="card-body p-3">
+    <apx-chart
+      *ngIf="amountChartData$ | async as chartData"
+      [title]="{
+        text:
+          dateRangeService.formatter.format(dateRangeService.fromDate) +
+          ' မှ ' +
+          dateRangeService.formatter.format(dateRangeService.toDate) +
+          ' ထိနယ်ပို့စာရင်း'
+      }"
+      [series]="chartData.data"
+      [chart]="amountChartOptions.chart"
+      [xaxis]="{ categories: chartData.labels, labels: { trim: false }, }"
+      [noData]="amountChartOptions.noData"
+      [stroke]="amountChartOptions.stroke"
+      [tooltip]="amountChartOptions.tooltip"
+      [dataLabels]="amountChartOptions.dataLabels"
+      [legend]="amountChartOptions.legend"
+      [markers]="amountChartOptions.markers"
+      [grid]="amountChartOptions.grid"
+    >
+    </apx-chart>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xl-6 mb-3">
+    <div
+      class="card"
+      *ngIf="
+        !(mainDashboardService.customerPaymentChartLoading$ | async);
+        else loading
+      "
+    >
+      <div class="card-body p-3">
+        <div class="chart-container">
+          <apx-chart
+            *ngIf="customerPaymentChartData$ | async as chartData"
+            [title]="{
+              text:
+                dateRangeService.formatter.format(dateRangeService.fromDate) +
+                ' မှ ' +
+                dateRangeService.formatter.format(dateRangeService.toDate) +
+                ' ထိကုန်သည်နယ်ပို့စာရင်းများ'
+            }"
+            [series]="chartData.data"
+            [chart]="{
+              type: customerPaymentChartOptions.chart.type,
+              height: 50 * chartData.labels.length,
+              fontFamily: customerPaymentChartOptions.chart.fontFamily,
+              animations: customerPaymentChartOptions.chart.animations,
+            }"
+            [xaxis]="{ categories: chartData.labels,  }"
+            [plotOptions]="customerPaymentChartOptions.plotOptions"
+            [noData]="customerPaymentChartOptions.noData"
+          ></apx-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-6 mb-3">
+    <div
+      class="card"
+      *ngIf="
+        !(mainDashboardService.vendorPaymentChartLoading$ | async);
+        else loading
+      "
+    >
+      <div class="card-body p-3">
+        <div class="chart-container">
+          <apx-chart
+            *ngIf="vendorPaymentChartData$ | async as chartData"
+            [title]="{
+              text:
+                dateRangeService.formatter.format(dateRangeService.fromDate) +
+                ' မှ ' +
+                dateRangeService.formatter.format(dateRangeService.toDate) +
+                ' ထိပွဲရုံနယ်ပို့စာရင်းများ'
+            }"
+            [series]="chartData.data"
+            [chart]="{
+              type: vendorPaymentChartOptions.chart.type,
+              height: 50 * chartData.labels.length,
+              fontFamily: vendorPaymentChartOptions.chart.fontFamily,
+              animations: vendorPaymentChartOptions.chart.animations,
+            }"
+            [xaxis]="{ categories: chartData.labels,  }"
+            [plotOptions]="vendorPaymentChartOptions.plotOptions"
+            [noData]="vendorPaymentChartOptions.noData"
+          ></apx-chart>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <app-loading-center></app-loading-center>
+</ng-template>

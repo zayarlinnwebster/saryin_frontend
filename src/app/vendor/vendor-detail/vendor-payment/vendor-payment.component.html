@@ -1,0 +1,77 @@
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col" sortable="paymentDate" (sort)="onSort($event)">
+          ရက်စွဲ
+        </th>
+        <th scope="col">သွင်းငွေ</th>
+        <th scope="col">ပေးဆောင်ပုံ</th>
+        <th scope="col">ငွေလွှဲနံပါတ်</th>
+        <th scope="col">လုပ်ဆောင်ချက်</th>
+      </tr>
+    </thead>
+
+    <ng-container
+      *ngIf="!(vendorPaymentService.listLoading$ | async); else loading"
+    >
+      <tbody *ngIf="payments$ | async as vendorPayments">
+        <ng-container *ngIf="vendorPayments.length > 0; else noData">
+          <tr *ngFor="let vendorPayment of vendorPayments; let i = index">
+            <th scope="row">{{ i + 1 }}</th>
+            <td>{{ vendorPayment.paymentDate | date : "YYYY-MM-dd" }}</td>
+            <td>{{ vendorPayment.paidAmount | number }}</td>
+            <td>{{ vendorPayment.paidBy }}</td>
+            <td>{{ vendorPayment.transactionNo || "-" }}</td>
+            <td>
+              <button
+                type="button me-2"
+                class="btn btn-outline-secondary btn-sm me-1"
+                (click)="openEditVendorPayment(vendorPayment)"
+              >
+                <i class="bi bi-pencil-square"></i>
+              </button>
+              <button
+                type="button "
+                class="btn btn-outline-danger btn-sm me-1"
+                (click)="deleteVendorPayment(vendorPayment.id)"
+              >
+                <i class="bi bi-trash"></i>
+              </button>
+            </td>
+          </tr>
+        </ng-container>
+
+        <ng-template #noData>
+          <tr emptyRow></tr>
+        </ng-template>
+      </tbody>
+    </ng-container>
+
+    <ng-template #loading>
+      <tbody loadingRow></tbody>
+    </ng-template>
+  </table>
+</div>
+
+<div class="d-flex flex-column flex-md-row justify-content-between p-2">
+  <ngb-pagination
+    [collectionSize]="(total$ | async)!"
+    [(page)]="vendorDetailService.page"
+    [pageSize]="vendorDetailService.limit"
+    [maxSize]="5"
+  >
+  </ngb-pagination>
+
+  <ng-select
+    style="width: auto"
+    name="limit"
+    [items]="limitOptions"
+    [bindLabel]="'label'"
+    [bindValue]="'value'"
+    [clearable]="false"
+    [(ngModel)]="vendorDetailService.limit"
+  >
+  </ng-select>
+</div>

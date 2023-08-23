@@ -1,0 +1,26 @@
+.login-container {
+  margin-top: 10%;
+}
+
+.card-logo {
+  display: none;
+  padding: 10px;
+}
+
+@media only screen and (max-width: 992px) {
+  .logo-container {
+    display: none;
+  }
+
+  .card-logo {
+    display: block;
+  }
+
+  .login-container {
+    margin-top: 0;
+  }
+  
+  .card-title {
+    font-size: 15px;
+  }
+}

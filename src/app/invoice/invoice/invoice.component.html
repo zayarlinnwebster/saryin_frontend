@@ -1,0 +1,143 @@
+<div class="modal-header">
+  <h5 class="modal-title">နယ်ပို့စာရင်းအသစ် သိမ်းဆည်းပါ။</h5>
+  <div>
+    <!-- <button
+      type="button"
+      class="btn"
+      aria-label="Expand"
+      (click)="isFullscreen = !isFullscreen"
+      (click)="activeModal.update({ fullscreen: isFullscreen })"
+    >
+      <i class="bi bi-arrows-angle-expand"></i>
+    </button> -->
+    <button
+      type="button"
+      class="btn"
+      aria-label="Close"
+      (click)="activeModal.dismiss('Cross click')"
+    >
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+</div>
+<form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()">
+  <div class="modal-body">
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="mb-3">
+          <label for="invoiceDate" class="form-label">ရက်စွဲ</label>
+          <div class="input-group">
+            <input
+              class="form-control"
+              placeholder="yyyy-mm-dd"
+              name="invoiceDate"
+              ngbDatepicker
+              #d="ngbDatepicker"
+              formControlName="invoiceDate"
+              [ngClass]="{
+                'is-invalid': invoiceDate.invalid && invoiceDate.touched
+              }"
+            />
+            <button
+              class="btn btn-outline-secondary bi bi-calendar3"
+              (click)="d.toggle()"
+              type="button"
+            ></button>
+
+            <div
+              *ngIf="invoiceDate.invalid && invoiceDate.touched"
+              id="invoiceDate"
+              class="invalid-feedback"
+            >
+              <small *ngIf="invoiceDate.hasError('required')">
+                ရက်စွဲဖြည့်ရန်လိုအပ်ပါတယ်။
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6">
+        <div class="mb-3">
+          <label for="customerId" class="form-label">ကုန်သည်အမည်</label>
+          <ng-select
+            id="customerId"
+            [loading]="(customerService.dropdownLoading$ | async) ?? false"
+            [items]="dropdownCustomers$ | async"
+            [bindLabel]="'fullName'"
+            [bindValue]="'id'"
+            placeholder="ကုန်သည်အမည်ကို ရွေးပါ။"
+            [typeahead]="customerService.dropdownSearch$"
+            formControlName="customerId"
+            [ngClass]="{
+              'is-invalid': customerId.invalid && customerId.touched
+            }"
+            autofocus
+          >
+          </ng-select>
+          <div
+            *ngIf="customerId.invalid && customerId.touched"
+            id="customerId"
+            class="invalid-feedback"
+          >
+            <small *ngIf="customerId.hasError('required')">
+              ကုန်သည်အမည်ရွေးရန်လိုအပ်ပါတယ်။
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-lg-6">
+        <div class="mb-3">
+          <button
+            type="button"
+            class="btn btn-outline-info"
+            (click)="createInvoiceDetail()"
+          >
+            ကုန်အသစ်ထည့်မည်
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3" formArrayName="invoiceDetails">
+      <app-invoice-detail
+        [invoiceDetails]="invoiceDetails"
+        [totalItemAmount]="totalAmount"
+      ></app-invoice-detail>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="activeModal.dismiss('Cross click')"
+    >
+      ပိတ်မည်။
+    </button>
+    <button
+      *ngIf="!(invoiceService.createLoading$ | async)"
+      type="submit"
+      class="btn btn-outline-primary"
+      [disabled]="invoiceForm.invalid"
+    >
+      သိမ်းဆည်းမည်။
+    </button>
+    <button
+      *ngIf="invoiceService.createLoading$ | async"
+      class="btn btn-primary"
+      type="button"
+      disabled
+    >
+      <span
+        class="spinner-border spinner-border-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      လုပ်ဆောင်နေသည်
+    </button>
+  </div>
+</form>

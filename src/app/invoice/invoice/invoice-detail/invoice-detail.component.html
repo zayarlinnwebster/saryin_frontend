@@ -1,0 +1,334 @@
+<div class="table-responsive">
+  <table
+    class="table table-bordered"
+    [ngClass]="{
+      'border-danger':
+        invoiceDetails.invalid && invoiceDetails.hasError('noItems')
+    }"
+  >
+    <caption
+      class="text-danger caption-top"
+      *ngIf="invoiceDetails.invalid && invoiceDetails.hasError('noItems')"
+    >
+      အနည်းဆုံး ကုန်တစ်ခုဖြည့်ပေးရန်လိုအပ်ပါသည်။
+    </caption>
+    <thead>
+      <tr class="text-nowrap">
+        <th class="w-15">ပွဲရုံအမည်</th>
+        <th class="w-15">ငါးအမည်</th>
+        <th class="w-10">အရေအတွက်</th>
+        <th class="w-20">အလေးချိန်</th>
+        <th class="w-15">စျေးနှုန်း</th>
+        <th class="w-15">အလုပ်သမားခ</th>
+        <th class="w-15">အထွေထွေခ</th>
+        <th class="w-15">စုစုပေါင်းစျေးနှုန်း</th>
+        <th class="w-10">ဖျက်ရန်</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngIf="invoiceDetails.controls.length > 0; else noData">
+        <tr *ngFor="let invoiceDetailForm of invoiceDetailForms; let i = index">
+          <ng-container [formGroup]="invoiceDetailForm">
+            <td>
+              <div>
+                <ng-select
+                  id="vendorId"
+                  [loading]="(vendorService.dropdownLoading$ | async) ?? false"
+                  [items]="dropdownVendors$ | async"
+                  [bindLabel]="'vendorName'"
+                  [bindValue]="'id'"
+                  placeholder="ပွဲရုံအမည်ကို ရွေးပါ။"
+                  [typeahead]="vendorService.dropdownSearch$"
+                  formControlName="vendorId"
+                  [ngClass]="{
+                    'is-invalid':
+                      invoiceDetailForm.get('vendorId')?.invalid &&
+                      invoiceDetailForm.get('vendorId')?.touched
+                  }"
+                  appendTo="app-invoice"
+                >
+                </ng-select>
+                <div
+                  *ngIf="
+                    invoiceDetailForm.get('vendorId')?.touched &&
+                    invoiceDetailForm.get('vendorId')?.invalid
+                  "
+                  id="vendorId"
+                  class="invalid-feedback"
+                >
+                  <small
+                    *ngIf="
+                      invoiceDetailForm.get('vendorId')?.hasError('required')
+                    "
+                  >
+                    ပွဲရုံအမည်ထည်းသွင်းရန်လိုအပ်ပါသည်။
+                  </small>
+                </div>
+              </div>
+            </td>
+            <td>
+              <div>
+                <ng-select
+                  id="itemId"
+                  [loading]="(itemService.dropdownLoading$ | async) ?? false"
+                  [items]="dropdownItems$ | async"
+                  [bindLabel]="'itemName'"
+                  [bindValue]="'id'"
+                  placeholder="ငါးအမည်ကို ရွေးပါ။"
+                  [typeahead]="itemService.dropdownSearch$"
+                  formControlName="itemId"
+                  [ngClass]="{
+                    'is-invalid':
+                      invoiceDetailForm.get('itemId')?.invalid &&
+                      invoiceDetailForm.get('itemId')?.touched
+                  }"
+                  appendTo="app-invoice"
+                >
+                </ng-select>
+                <div
+                  *ngIf="
+                    invoiceDetailForm.get('itemId')?.touched &&
+                    invoiceDetailForm.get('itemId')?.invalid
+                  "
+                  id="itemId"
+                  class="invalid-feedback"
+                >
+                  <small
+                    *ngIf="
+                      invoiceDetailForm.get('itemId')?.hasError('required')
+                    "
+                  >
+                    ငါးအမည်ထည်းသွင်းရန်လိုအပ်ပါသည်။
+                  </small>
+                </div>
+              </div>
+            </td>
+
+            <td>
+              <input
+                type="number"
+                class="form-control"
+                id="qty"
+                formControlName="qty"
+                placeholder="အရေအတွက်ထည့်သွင်းပါ။"
+                [ngClass]="{
+                  'is-invalid':
+                    invoiceDetailForm.get('qty')?.invalid &&
+                    invoiceDetailForm.get('qty')?.touched
+                }"
+              />
+              <div
+                *ngIf="
+                  invoiceDetailForm.get('qty')?.touched &&
+                  invoiceDetailForm.get('qty')?.invalid
+                "
+                id="qty"
+                class="invalid-feedback"
+              >
+                <small
+                  *ngIf="invoiceDetailForm.get('qty')?.hasError('required')"
+                >
+                  အရေအတွက်ထည့်သွင်းရန်လိုအပ်ပါသည်။
+                </small>
+                <small *ngIf="invoiceDetailForm.get('qty')?.hasError('min')">
+                  အရေအတွက်သည် 1 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+                </small>
+              </div>
+            </td>
+
+            <td>
+              <input
+                type="number"
+                class="form-control"
+                id="weight"
+                formControlName="weight"
+                placeholder="အလေးချိန်ထည့်သွင်းပါ။"
+                [ngClass]="{
+                  'is-invalid':
+                    invoiceDetailForm.get('weight')?.invalid &&
+                    invoiceDetailForm.get('weight')?.touched
+                }"
+              />
+              <div
+                *ngIf="
+                  invoiceDetailForm.get('weight')?.touched &&
+                  invoiceDetailForm.get('weight')?.invalid
+                "
+                id="weight"
+                class="invalid-feedback"
+              >
+                <small
+                  *ngIf="invoiceDetailForm.get('weight')?.hasError('required')"
+                >
+                  အရေအတွက်ထည့်သွင်းရန်လိုအပ်ပါသည်။
+                </small>
+              </div>
+            </td>
+
+            <td>
+              <input
+                type="number"
+                class="form-control"
+                id="unitPrice"
+                formControlName="unitPrice"
+                placeholder="စုစုပေါင်းစျေးနှုန်းထည့်သွင်းပါ။"
+                [ngClass]="{
+                  'is-invalid':
+                    invoiceDetailForm.get('unitPrice')?.invalid &&
+                    invoiceDetailForm.get('unitPrice')?.touched
+                }"
+              />
+              <div
+                *ngIf="
+                  invoiceDetailForm.get('unitPrice')?.touched &&
+                  invoiceDetailForm.get('unitPrice')?.invalid
+                "
+                id="unitPrice"
+                class="invalid-feedback"
+              >
+                <small
+                  *ngIf="
+                    invoiceDetailForm.get('unitPrice')?.hasError('required')
+                  "
+                >
+                  စုစုပေါင်းစျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
+                </small>
+                <small
+                  *ngIf="invoiceDetailForm.get('unitPrice')?.hasError('min')"
+                >
+                  စျေးနှုန်းသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+                </small>
+              </div>
+            </td>
+            <td>
+              <input
+                class="form-control"
+                type="number"
+                id="laborFee"
+                formControlName="laborFee"
+                placeholder="အလုပ်သမား အခကြေးငွေထည့်သွင်းပါ။"
+                [ngClass]="{
+                  'is-invalid':
+                    invoiceDetailForm.get('laborFee')?.invalid &&
+                    invoiceDetailForm.get('laborFee')?.touched
+                }"
+              />
+              <div
+                *ngIf="
+                  invoiceDetailForm.get('laborFee')?.invalid &&
+                  invoiceDetailForm.get('laborFee')?.touched
+                "
+                id="laborFee"
+                class="invalid-feedback"
+              >
+                <small
+                  *ngIf="
+                    invoiceDetailForm.get('laborFee')?.hasError('required')
+                  "
+                >
+                  အလုပ်သမား အခကြေးငွေထည်းသွင်းရန်လိုအပ်ပါသည်။
+                </small>
+                <small
+                  *ngIf="invoiceDetailForm.get('laborFee')?.hasError('min')"
+                >
+                  အလုပ်သမား အခကြေးငွေသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+                </small>
+              </div>
+            </td>
+
+            <td>
+              <input
+                class="form-control"
+                type="number"
+                id="generalFee"
+                formControlName="generalFee"
+                placeholder="အထွေထွေ အခကြေးငွေထည့်သွင်းပါ။"
+                [ngClass]="{
+                  'is-invalid':
+                    invoiceDetailForm.get('generalFee')?.invalid &&
+                    invoiceDetailForm.get('generalFee')?.touched
+                }"
+              />
+              <div
+                *ngIf="
+                  invoiceDetailForm.get('generalFee')?.invalid &&
+                  invoiceDetailForm.get('generalFee')?.touched
+                "
+                id="generalFee"
+                class="invalid-feedback"
+              >
+                <small
+                  *ngIf="
+                    invoiceDetailForm.get('generalFee')?.hasError('required')
+                  "
+                >
+                  အထွေထွေ အခကြေးငွေထည်းသွင်းရန်လိုအပ်ပါသည်။
+                </small>
+                <small
+                  *ngIf="invoiceDetailForm.get('generalFee')?.hasError('min')"
+                >
+                  အထွေထွေ အခကြေးငွေသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+                </small>
+              </div>
+            </td>
+
+            <td>
+              <input
+                type="number"
+                class="form-control"
+                id="totalPrice"
+                formControlName="totalPrice"
+                [ngClass]="{
+                  'is-invalid':
+                    invoiceDetailForm.get('totalPrice')?.invalid &&
+                    invoiceDetailForm.get('totalPrice')?.touched
+                }"
+              />
+              <div
+                *ngIf="
+                  invoiceDetailForm.get('totalPrice')?.touched &&
+                  invoiceDetailForm.get('totalPrice')?.invalid
+                "
+                id="totalPrice"
+                class="invalid-feedback"
+              >
+                <small
+                  *ngIf="
+                    invoiceDetailForm.get('totalPrice')?.hasError('required')
+                  "
+                >
+                  စျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
+                </small>
+                <small
+                  *ngIf="invoiceDetailForm.get('totalPrice')?.hasError('min')"
+                >
+                  စျေးနှုန်းသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+                </small>
+              </div>
+            </td>
+            <td>
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-danger"
+                (click)="removeInvoiceDetail(i)"
+              >
+                <i class="fa fa-minus"></i>
+              </button>
+            </td>
+          </ng-container>
+        </tr>
+      </ng-container>
+
+      <ng-template #noData>
+        <tr emptyRow></tr>
+      </ng-template>
+    </tbody>
+
+    <tfoot>
+      <tr>
+        <th colspan="7" class="text-end">စုစုပေါင်းငွေပမာဏ</th>
+        <th colspan="2">{{ totalItemAmount.value | number }}</th>
+      </tr>
+    </tfoot>
+  </table>
+</div>

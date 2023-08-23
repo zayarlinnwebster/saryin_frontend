@@ -1,0 +1,118 @@
+<div class="modal-header">
+  <h5 class="modal-title">ကုန်သည်နာမည်အသစ် သိမ်းဆည်းပါ။</h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('Cross click')"
+  ></button>
+</div>
+<form [formGroup]="customerForm" (ngSubmit)="onSubmit()">
+  <div class="modal-body">
+    <div class="mb-3">
+      <label for="fullName" class="form-label">ကုန်သည်နာမည်</label>
+      <input
+        type="text"
+        class="form-control"
+        id="fullName"
+        formControlName="fullName"
+        placeholder="ပွဲရုံနာမည်ထည့်သွင်းပါ။"
+        [ngClass]="{ 'is-invalid': fullName.invalid && fullName.touched }"
+        ngbAutofocus
+      />
+      <div
+        *ngIf="fullName.invalid && fullName.touched"
+        id="fullName"
+        class="invalid-feedback"
+      >
+        <small *ngIf="fullName.hasError('required')">
+          ကုန်သည်နာမည်ဖြည့်ရန်လိုအပ်ပါတယ်။
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="phoneNo" class="form-label">ဖုန်းနံပါတ်</label>
+      <input
+        type="text"
+        class="form-control"
+        id="phoneNo"
+        formControlName="phoneNo"
+        placeholder="ဖုန်းနံပါတ်ထည့်သွင်းပါ။"
+      />
+    </div>
+
+    <div class="mb-3">
+      <label for="address" class="form-label">လိပ်စာ</label>
+      <textarea
+        class="form-control"
+        id="address"
+        formControlName="address"
+        placeholder="လိပ်စာထည့်သွင်းပါ။"
+        rows="4"
+        cols="50"
+      >
+      </textarea>
+    </div>
+
+    <div class="mb-3">
+      <label for="commission" class="form-label">ကော်မရှင် (ရာခိုင်နှုန်း)</label>
+      <input
+        class="form-control"
+        type="number"
+        id="commission"
+        formControlName="commission"
+        placeholder="ကော်မရှင်ထည့်သွင်းပါ။"
+        [ngClass]="{
+          'is-invalid': commission.invalid && commission.touched
+        }"
+      />
+      <div
+        *ngIf="commission.invalid && commission.touched"
+        id="commission"
+        class="invalid-feedback"
+      >
+        <small *ngIf="commission.hasError('required')">
+          ကော်မရှင် ထည်းသွင်းရန်လိုအပ်ပါသည်။
+        </small>
+        <small *ngIf="commission.hasError('min')">
+          ကော်မရှင်သည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+        </small>
+        <small *ngIf="commission.hasError('max')">
+          ကော်မရှင်သည် 100 ထက် ငယ်သည် သို့မဟုတ် ညီရမည်။
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="activeModal.dismiss('Cross click')"
+    >
+      ပိတ်မည်။
+    </button>
+    <button
+      *ngIf="!(customerService.createLoading$ | async)"
+      type="submit"
+      class="btn btn-outline-primary"
+      [disabled]="customerForm.invalid"
+    >
+      သိမ်းဆည်းမည်။
+    </button>
+    <button
+      *ngIf="customerService.createLoading$ | async"
+      class="btn btn-primary"
+      type="button"
+      disabled
+    >
+      <span
+        class="spinner-border spinner-border-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      လုပ်ဆောင်နေသည်
+    </button>
+  </div>
+</form>

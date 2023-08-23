@@ -1,0 +1,327 @@
+<div class="card p-3">
+  <form>
+    <div class="row mb-3">
+      <div class="col-md-3">
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="search"
+            placeholder="ရှာဖွေရန်...."
+            [(ngModel)]="stockItemService.searchList"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="mb-3">
+          <ng-select
+            id="storeId"
+            [loading]="(storeService.dropdownLoading$ | async) ?? false"
+            [items]="dropdownStore$ | async"
+            [bindLabel]="'storeName'"
+            [bindValue]="'id'"
+            placeholder="သိုလှောင်ရုံအမည် ရွေးပါ။"
+            [typeahead]="storeService.dropdownSearch$"
+            [(ngModel)]="stockItemService.storeId"
+            [ngModelOptions]="{ standalone: true }"
+          >
+          </ng-select>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="mb-3">
+          <div class="dp-hidden position-absolute">
+            <div class="input-group">
+              <input
+                name="datepicker"
+                class="form-control"
+                ngbDatepicker
+                #datepicker="ngbDatepicker"
+                [autoClose]="'outside'"
+                (dateSelect)="stockItemService.onDateSelection($event)"
+                [displayMonths]="2"
+                [dayTemplate]="t"
+                outsideDays="hidden"
+                [startDate]="dateRangeService.fromDate!"
+                tabindex="-1"
+              />
+              <ng-template #t let-date let-focused="focused">
+                <span
+                  class="custom-day"
+                  [class.focused]="focused"
+                  [class.range]="dateRangeService.isRange(date)"
+                  [class.faded]="
+                    dateRangeService.isHovered(date) ||
+                    dateRangeService.isInside(date)
+                  "
+                  (mouseenter)="dateRangeService.hoveredDate = date"
+                  (mouseleave)="dateRangeService.hoveredDate = null"
+                >
+                  {{ date.day }}
+                </span>
+              </ng-template>
+            </div>
+          </div>
+          <div class="input-group">
+            <input
+              #dpFromDate
+              class="form-control"
+              placeholder="ရက်စွဲအပိုင်းအခြားကို ရွေးပါ..."
+              name="dpFromDate"
+              [value]="
+                dateRangeService.formatter.format(dateRangeService.fromDate) +
+                ' မှ ' +
+                dateRangeService.formatter.format(dateRangeService.toDate)
+              "
+              [disabled]="true"
+            />
+            <button
+              class="btn btn-outline-secondary bi bi-calendar3"
+              (click)="datepicker.toggle()"
+              type="button"
+            ></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="d-flex flex-column flex-md-row justify-content-end">
+          <button
+            class="btn btn-success mb-3 mx-2"
+            type="button"
+            (click)="stockItemService.exportStockItem()"
+          >
+            စာရင်းသိမ်းမည်။
+          </button>
+
+          <button
+            type="button"
+            class="btn btn-primary mb-3 mx-2"
+            (click)="openCreateStockItem()"
+          >
+            လှောင်ကုန်စာရင်းအသစ်ဖန်တီးရန်
+          </button>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col" sortable="storedDate" (sort)="onSort($event)">
+            ရက်စွဲ (သွင်း)
+          </th>
+          <th scope="col" sortable="store.storeName" (sort)="onSort($event)">
+            သိုလှောင်ရုံအမည်
+          </th>
+          <th scope="col" sortable="customer.fullName" (sort)="onSort($event)">
+            ကုန်သည်အမည်
+          </th>
+          <th scope="col" sortable="item.itemName" (sort)="onSort($event)">
+            ငါးအမည်
+          </th>
+          <th scope="col">စျေးနှုန်း</th>
+          <th scope="col">အရေအတွက် / အလေးချိန် (သွင်း)</th>
+          <th scope="col">အရေအတွက် / အလေးချိန် (ထုတ်)</th>
+          <th scope="col">အရေအတွက် / အလေးချိန် (ကျန်)</th>
+          <th scope="col">စုစုပေါင်းစျေးနှုန်း</th>
+          <th scope="col">လုပ်ဆောင်ချက်</th>
+        </tr>
+      </thead>
+
+      <ng-container
+        *ngIf="!(stockItemService.listLoading$ | async); else loading"
+      >
+        <tbody *ngIf="stockItems$ | async as stockItems">
+          <ng-container *ngIf="stockItems.length > 0; else noStockItemData">
+            <ng-container *ngFor="let stockItem of stockItems; let i = index">
+              <tr>
+                <th scope="row">{{ i + 1 }}</th>
+                <td>{{ stockItem.storedDate | date : "YYYY-MM-dd" }}</td>
+                <td>
+                  <a
+                    class="link-dark link-underline link-underline-opacity-0"
+                    [routerLink]="['/store', stockItem.store?.id]"
+                    [fragment]="'လှောင်ကုန်'"
+                    >{{ stockItem.store?.storeName }}</a
+                  >
+                </td>
+                <td>
+                  <a
+                    class="link-dark link-underline link-underline-opacity-0"
+                    [routerLink]="['/customer', stockItem.customer?.id]"
+                    [fragment]="'လွှဲငွေ'"
+                    >{{ stockItem.customer?.fullName }}</a
+                  >
+                </td>
+                <td>{{ stockItem.item?.itemName }}</td>
+                <td>{{ stockItem.unitPrice | number }}</td>
+                <td>
+                  {{ stockItem.qty | number }} /
+                  {{ stockItem.weight | number : "1.1-2" }}
+                </td>
+                <td>
+                  {{ stockItem.totalQtyOut || 0 | number }} /
+                  {{ stockItem.totalWeightOut || 0 | number : "1.1-2" }}
+                </td>
+                <td>
+                  <b>
+                    {{
+                      stockItem.qty - (stockItem.totalQtyOut || 0) | number
+                    }}
+                    /
+                    {{
+                      stockItem.weight - (stockItem.totalWeightOut || 0)
+                        | number : "1.1-2"
+                    }}
+                  </b>
+                </td>
+                <td>{{ stockItem.totalPrice | number }}</td>
+                <td>
+                  <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm me-1"
+                    (click)="openEditStockItem(stockItem)"
+                  >
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-danger btn-sm me-1"
+                    (click)="deleteStockItem(stockItem.id)"
+                  >
+                    <i class="bi bi-trash"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-primary btn-sm me-1"
+                    (click)="toggleDetails(i)"
+                  >
+                    <i
+                      class="bi"
+                      [ngClass]="!isDetailsOpen[i] ? 'bi-eye-slash' : 'bi-eye'"
+                    ></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn btn-outline-success btn-sm me-1"
+                    (click)="openCreateStockItemOut(stockItem)"
+                  >
+                    <i class="bi bi-journal-minus"></i>
+                  </button>
+                </td>
+              </tr>
+
+              <tr *ngIf="isDetailsOpen[i]">
+                <td colspan="100%">
+                  <table class="table table-sm">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col" colspan colspan="2">ရက်စွဲ (ထုန်)</th>
+                        <th scope="col">စျေးနှုန်း</th>
+                        <th scope="col">အရေအတွက် / အလေးချိန်</th>
+                        <th scope="col">ပွဲခ (ရာခိုင်နှုန်း)</th>
+                        <th scope="col">စုစုပေါင်းစျေးနှုန်း</th>
+                        <th scope="col" colspan="100%">လုပ်ဆောင်ချက်</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container
+                        *ngIf="stockItem.outItems; else noStockItemOutData"
+                      >
+                        <ng-container
+                          *ngFor="
+                            let stockItemOut of stockItem.outItems;
+                            let i = index
+                          "
+                        >
+                          <tr class="collapse-row">
+                            <td scope="row">#</td>
+                            <td colspan="2">
+                              {{ stockItemOut.outDate | date : "YYYY-MM-dd" }}
+                            </td>
+                            <td>
+                              {{ stockItemOut.unitPrice | number }}
+                            </td>
+                            <td>
+                              {{ stockItemOut.qty | number }} /
+                              {{ stockItemOut.weight | number : "1.1-2" }}
+                            </td>
+                            <td>
+                              {{ stockItemOut.commission | number : "1.1-2" }} %
+                            </td> 
+                            <td>
+                              {{ stockItemOut.totalPrice | number }}
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                class="btn btn-outline-secondary btn-sm me-1"
+                                (click)="
+                                  openEditStockItemOut(stockItem, stockItemOut)
+                                "
+                              >
+                                <i class="bi bi-pencil-square"></i>
+                              </button>
+                              <button
+                                type="button"
+                                class="btn btn-outline-danger btn-sm me-1"
+                                (click)="deleteStockItemOut(stockItemOut.id)"
+                              >
+                                <i class="bi bi-trash"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </ng-container>
+
+                      <ng-template #noStockItemOutData>
+                        <tr emptyRow></tr>
+                      </ng-template>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </ng-container>
+          </ng-container>
+
+          <ng-template #noStockItemData>
+            <tr emptyRow></tr>
+          </ng-template>
+        </tbody>
+      </ng-container>
+
+      <ng-template #loading>
+        <tbody loadingRow></tbody>
+      </ng-template>
+    </table>
+  </div>
+
+  <div class="d-flex flex-column flex-md-row justify-content-between p-2">
+    <ngb-pagination
+      [collectionSize]="(total$ | async)!"
+      [(page)]="stockItemService.page"
+      [pageSize]="stockItemService.limit"
+      [maxSize]="5"
+    >
+    </ngb-pagination>
+
+    <ng-select
+      style="width: auto"
+      name="limit"
+      [items]="limitOptions"
+      [bindLabel]="'label'"
+      [bindValue]="'value'"
+      [clearable]="false"
+      [(ngModel)]="stockItemService.limit"
+    >
+    </ng-select>
+  </div>
+</div>

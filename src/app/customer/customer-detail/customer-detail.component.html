@@ -1,0 +1,202 @@
+<div class="card mb-3">
+  <div class="card-body">
+    <h6 class="card-title fw-bold mb-3">ရှာဖွေမှုပုံစံ</h6>
+    <div class="row">
+      <div class="col-md-3">
+        <div class="mb-3">
+          <input
+            type="text"
+            class="form-control"
+            id="search"
+            placeholder="ရှာဖွေရန်...."
+            [(ngModel)]="customerDetailService.searchList"
+            [ngModelOptions]="{ standalone: true }"
+          />
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="mb-3">
+          <div class="dp-hidden position-absolute">
+            <div class="input-group">
+              <input
+                name="datepicker"
+                class="form-control"
+                ngbDatepicker
+                #datepicker="ngbDatepicker"
+                [autoClose]="'outside'"
+                (dateSelect)="customerDetailService.onDateSelection($event)"
+                [displayMonths]="2"
+                [dayTemplate]="t"
+                outsideDays="hidden"
+                [startDate]="dateRangeService.fromDate!"
+                tabindex="-1"
+              />
+              <ng-template #t let-date let-focused="focused">
+                <span
+                  class="custom-day"
+                  [class.focused]="focused"
+                  [class.range]="dateRangeService.isRange(date)"
+                  [class.faded]="
+                    dateRangeService.isHovered(date) ||
+                    dateRangeService.isInside(date)
+                  "
+                  (mouseenter)="dateRangeService.hoveredDate = date"
+                  (mouseleave)="dateRangeService.hoveredDate = null"
+                >
+                  {{ date.day }}
+                </span>
+              </ng-template>
+            </div>
+          </div>
+          <div class="input-group">
+            <input
+              #dpFromDate
+              class="form-control"
+              placeholder="ရက်စွဲအပိုင်းအခြားကို ရွေးပါ..."
+              name="dpFromDate"
+              [value]="
+                dateRangeService.formatter.format(dateRangeService.fromDate) +
+                ' မှ ' +
+                dateRangeService.formatter.format(dateRangeService.toDate)
+              "
+              [disabled]="true"
+            />
+            <button
+              class="btn btn-outline-secondary bi bi-calendar3"
+              (click)="datepicker.toggle()"
+              type="button"
+            ></button>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="d-flex flex-column flex-md-row justify-content-end">
+          <button
+            class="btn btn-success mb-3 mx-2"
+            type="button"
+            (click)="customerDetailService.exportCustomerDetail()"
+          >
+            စာရင်းသိမ်းမည်။
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="customer$ | async as customer; else loading" class="card p-3 mb-3">
+  <div class="row mt-3">
+    <div class="col-md-6 mb-5 text-center">
+      <h2 class="fw-bold mb-2">{{ customer.fullName }}</h2>
+      <span class="text-secondary ps-2">(ကုန်သည်)</span>
+    </div>
+    <div class="col-md-6">
+      <div class="row">
+        <div class="col-6 mb-3">
+          ဖုန်းနံပါတ် <span class="float-end">:</span>
+        </div>
+        <div class="col-6 mb-3">
+          <b>{{ customer.phoneNo || "-" }}</b>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6 mb-3">လိပ်စာ <span class="float-end">:</span></div>
+        <div class="col-6 mb-3">
+          <b>{{ customer.address || "-" }}</b>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-6 mb-3">
+          ကော်မရှင် (ရာခိုင်နှုန်း)<span class="float-end">:</span>
+        </div>
+        <div class="col-6 mb-3">
+          <b>{{ customer.commission | number : "1.1-2" }} %</b>
+        </div>
+      </div>
+
+      <ng-container *ngIf="customerUsage$ | async as customerUsage">
+        <div class="row">
+          <div class="col-6 mb-3">
+            လွှဲငွေစုစုပေါင်း <span class="float-end">:</span>
+          </div>
+          <div class="col-6 mb-3">
+            <b>{{ customerUsage.totalCustomerPayment || 0 | number }}</b>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6 mb-3">
+            နယ်ပို့စာရင်းငွေစုစုပေါင်း <span class="float-end">:</span>
+          </div>
+          <div class="col-6 mb-3">
+            <b>{{ customerUsage.totalCustomerInvoice || 0 | number }}</b>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6 mb-3">
+            ကော်မရှင်ခ <span class="float-end">:</span>
+          </div>
+          <div class="col-6 mb-3">
+            <b
+              >{{
+                (customerUsage.totalCustomerInvoice * customer.commission) / 100
+                  | number:'1.0-0'
+              }}
+            </b>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6 mb-3">ကျန်ငွေ<span class="float-end">:</span></div>
+          <div class="col-6 mb-3">
+            <b
+              >{{
+                customerUsage.totalCustomerInvoice -
+                  customerUsage.totalCustomerPayment +
+                  (customerUsage.totalCustomerInvoice * customer.commission) /
+                    100 | number:'1.0-0'
+              }}
+            </b>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<div class="card p-3">
+  <div
+    ngbNav
+    #nav="ngbNav"
+    [activeId]="activeFragment$ | async"
+    class="nav-pills nav-fill mb-3"
+  >
+    <ng-container [ngbNavItem]="'လွှဲငွေ'">
+      <button ngbNavLink routerLink="." [fragment]="'လွှဲငွေ'">
+        လွှဲငွေစာရင်းများ
+      </button>
+      <ng-template ngbNavContent>
+        <app-customer-payment></app-customer-payment>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [ngbNavItem]="'နယ်ပို့'">
+      <button ngbNavLink routerLink="." [fragment]="'နယ်ပို့'">
+        နယ်ပို့စာရင်းများ
+      </button>
+      <ng-template ngbNavContent>
+        <app-customer-invoice></app-customer-invoice>
+      </ng-template>
+    </ng-container>
+  </div>
+  <div [ngbNavOutlet]="nav"></div>
+</div>
+
+<ng-template #loading>
+  <app-loading-center></app-loading-center>
+</ng-template>

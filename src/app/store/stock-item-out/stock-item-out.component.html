@@ -1,0 +1,271 @@
+<div class="modal-header">
+  <h5 class="modal-title">လှောင်ကုန်ထုတ်ယူ သိမ်းဆည်းပါ။</h5>
+  <button
+    type="button"
+    class="btn-close"
+    aria-label="Close"
+    (click)="activeModal.dismiss('Cross click')"
+  ></button>
+</div>
+<form [formGroup]="stockItemOutForm" (ngSubmit)="onSubmit()">
+  <div class="modal-body">
+    <div class="mb-4 text-center">
+      <h3 class="fw-bold mb-2">{{ stockItem.store?.storeName }}</h3>
+      <small class="text-secondary">(သိုလှောင်ရုံ)</small>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-6">
+        <b>ကုန်သည်</b>
+        <b class="float-end">:</b>
+      </div>
+      <div class="col-6">
+        {{ stockItem.customer?.fullName }}
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-6">
+        <b>ငါးအမယ်</b>
+        <b class="float-end">:</b>
+      </div>
+      <div class="col-6">
+        {{ stockItem.item?.itemName }}
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-6">
+        <b>စျေးနှုန်း</b>
+        <b class="float-end">:</b>
+      </div>
+      <div class="col-6">
+        {{ stockItem.unitPrice | number }}
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-6">
+        <b>အရေအတွက် (ကျန်)</b>
+        <b class="float-end">:</b>
+      </div>
+      <div class="col-6">
+        {{ stockItem.qty - (stockItem.totalQtyOut || 0) | number }}
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-6">
+        <b>အလေးချိန် (ကျန်)</b>
+        <b class="float-end">:</b>
+      </div>
+      <div class="col-6">
+        {{
+          stockItem.weight - (stockItem.totalWeightOut || 0) | number : "1.1-2"
+        }}
+      </div>
+    </div>
+
+    <hr />
+
+    <div class="mb-3">
+      <label for="outDate" class="form-label">ရက်စွဲ (ထုတ်)</label>
+      <div class="input-group">
+        <input
+          class="form-control"
+          placeholder="yyyy-mm-dd"
+          name="outDate"
+          ngbDatepicker
+          #d="ngbDatepicker"
+          formControlName="outDate"
+          [ngClass]="{
+            'is-invalid': outDate.invalid && outDate.touched
+          }"
+        />
+        <button
+          class="btn btn-outline-secondary bi bi-calendar3"
+          (click)="d.toggle()"
+          type="button"
+        ></button>
+
+        <div
+          *ngIf="outDate.invalid && outDate.touched"
+          id="outDate"
+          class="invalid-feedback"
+        >
+          <small *ngIf="outDate.hasError('required')">
+            ရက်စွဲဖြည့်ရန်လိုအပ်ပါတယ်။
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="unitPrice" class="form-label">စျေးနှုန်း</label>
+      <input
+        class="form-control"
+        type="number"
+        id="unitPrice"
+        formControlName="unitPrice"
+        placeholder="စျေးနှုန်းထည့်သွင်းပါ။"
+        [ngClass]="{
+          'is-invalid': unitPrice.invalid && unitPrice.touched
+        }"
+      />
+      <div
+        *ngIf="unitPrice.invalid && unitPrice.touched"
+        id="unitPrice"
+        class="invalid-feedback"
+      >
+        <small *ngIf="unitPrice.hasError('required')">
+          စျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
+        </small>
+        <small *ngIf="unitPrice.hasError('min')">
+          စျေးနှုန်းသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="qty" class="form-label">အရေအတွက် (ထုတ်)</label>
+      <input
+        class="form-control"
+        type="number"
+        id="qty"
+        formControlName="qty"
+        placeholder="အရေအတွက်ထည့်သွင်းပါ။"
+        [ngClass]="{
+          'is-invalid': qty.invalid && qty.touched
+        }"
+      />
+      <div *ngIf="qty.invalid && qty.touched" id="qty" class="invalid-feedback">
+        <small *ngIf="qty.hasError('required')">
+          အရေအတွက်ထည်းသွင်းရန်လိုအပ်ပါသည်။
+        </small>
+        <small *ngIf="qty.hasError('min')">
+          အရေအတွက်သည် 1 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+        </small>
+        <small *ngIf="qty.hasError('exceedQty')">
+          ထုတ်မည့်အရေအတွက်သည် လက်ကျန်အရေအတွက်ထက် နည်းရပါမည်။
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="weight" class="form-label">အလေးချိန် (ထုတ်)</label>
+      <input
+        class="form-control"
+        type="number"
+        id="weight"
+        formControlName="weight"
+        placeholder="အလေးချိန်ထည့်သွင်းပါ။"
+        [ngClass]="{
+          'is-invalid': weight.invalid && weight.touched
+        }"
+      />
+      <div
+        *ngIf="weight.invalid && weight.touched"
+        id="weight"
+        class="invalid-feedback"
+      >
+        <small *ngIf="weight.hasError('required')">
+          အလေးချိန်ထည်းသွင်းရန်လိုအပ်ပါသည်။
+        </small>
+        <small *ngIf="weight.hasError('min')">
+          အလေးချိန်သည် 1 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+        </small>
+        <small *ngIf="weight.hasError('exceedWeight')">
+          ထုတ်မည့်အလေးချိန်သည် လက်ကျန်အလေးချိန်ထက် နည်းရပါမည်။
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="commission" class="form-label">ပွဲခ (ရာခိုင်နှုန်း)</label>
+      <input
+        class="form-control"
+        type="number"
+        id="commission"
+        formControlName="commission"
+        placeholder="ပွဲခထည့်သွင်းပါ။"
+        [ngClass]="{
+          'is-invalid': commission.invalid && commission.touched
+        }"
+      />
+      <div
+        *ngIf="commission.invalid && commission.touched"
+        id="commission"
+        class="invalid-feedback"
+      >
+        <small *ngIf="commission.hasError('required')">
+          ပွဲခ ထည်းသွင်းရန်လိုအပ်ပါသည်။
+        </small>
+        <small *ngIf="commission.hasError('min')">
+          ပွဲခသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+        </small>
+        <small *ngIf="commission.hasError('max')">
+          ပွဲခသည် 100 ထက် ငယ်သည် သို့မဟုတ် ညီရမည်။
+        </small>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <label for="totalPrice" class="form-label">
+        စုစုပေါင်းစျေးနှုန်း
+        <small *ngIf="this.commissionFee.value > 0" class="text-secondary"
+          >+{{ this.commissionFee.value }}</small
+        >
+      </label>
+      <input
+        class="form-control"
+        type="number"
+        id="totalPrice"
+        formControlName="totalPrice"
+        placeholder="စုစုပေါင်းစျေးနှုန်းထည့်သွင်းပါ။"
+        [ngClass]="{
+          'is-invalid': totalPrice.invalid && totalPrice.touched
+        }"
+      />
+      <div
+        *ngIf="totalPrice.invalid && totalPrice.touched"
+        id="totalPrice"
+        class="invalid-feedback"
+      >
+        <small *ngIf="totalPrice.hasError('required')">
+          စုစုပေါင်းစျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-outline-dark"
+      (click)="activeModal.dismiss('Cross click')"
+    >
+      ပိတ်မည်။
+    </button>
+    <button
+      *ngIf="!(stockItemOutService.createLoading$ | async)"
+      type="submit"
+      class="btn btn-outline-primary"
+      [disabled]="stockItemOutForm.invalid"
+    >
+      သိမ်းဆည်းမည်။
+    </button>
+    <button
+      *ngIf="stockItemOutService.createLoading$ | async"
+      class="btn btn-primary"
+      type="button"
+      disabled
+    >
+      <span
+        class="spinner-border spinner-border-sm"
+        role="status"
+        aria-hidden="true"
+      ></span>
+      လုပ်ဆောင်နေသည်
+    </button>
+  </div>
+</form>

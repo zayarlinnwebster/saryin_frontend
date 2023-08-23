@@ -1,0 +1,11 @@
+.table {
+  min-width: 1000px;
+}
+
+.collapse-row th, .collapse-row td {
+  font-size: 12px;
+}
+
+.no-hover:hover {
+  background-color: black;
+}

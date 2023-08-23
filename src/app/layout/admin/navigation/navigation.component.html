@@ -1,0 +1,98 @@
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light ps-2 pe-2">
+  <a class="navbar-brand">
+    <img
+      src="assets/images/saryin.png"
+      width="40"
+      height="40"
+      alt="Sar Yin Logo"
+    />
+    <span class="ps-2 logo-text">စာရင်း</span>
+  </a>
+  <button
+    class="navbar-toggler"
+    type="button"
+    data-bs-toggle="collapse"
+    data-bs-target="#navbarNav"
+    aria-controls="navbarNav"
+    aria-expanded="false"
+    aria-label="Toggle navigation"
+  >
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarNav">
+    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+      <li
+        *ngFor="let navigation of navigations"
+        class="nav-item p-2 p-lg-0"
+        [ngClass]="{ dropdown: navigation.type === 'collapse' }"
+      >
+        <a
+          *ngIf="navigation.type === 'item'"
+          class="nav-link"
+          [routerLink]="[navigation.url]"
+          [routerLinkActive]="'active'"
+          [fragment]="navigation.fragment"
+        >
+          <fa-icon *ngIf="navigation.icon" [icon]="navigation.icon"></fa-icon>
+          {{ navigation.title }}
+        </a>
+
+        <a
+          *ngIf="navigation.type === 'collapse'"
+          class="nav-link dropdown-toggle"
+          role="button"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        >
+          <fa-icon *ngIf="navigation.icon" [icon]="navigation.icon"></fa-icon>
+          {{ navigation.title }}
+        </a>
+        <ul class="dropdown-menu">
+          <li *ngFor="let navigation of navigation.children">
+            <a
+              class="dropdown-item"
+              [routerLink]="[navigation.url]"
+              [routerLinkActive]="'active'"
+            >
+              {{ navigation.title }}
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <div class="btn-group">
+      <button
+        type="button"
+        class="btn btn-light dropdown-toggle"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        {{ authService.currentUserValue?.username }}
+        <i class="bi bi-person-circle"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-lg-end">
+        <li>
+          <button
+            class="dropdown-item"
+            type="button"
+            (click)="openProfile()"
+          >
+            အသုံးပြုသူ ပရိုဖိုင်
+          </button>
+        </li>
+        <li><hr class="dropdown-divider" /></li>
+        <li>
+          <button
+            class="dropdown-item"
+            type="button"
+            (click)="authService.logout()"
+          >
+            ထွက်မည်။
+          </button>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>

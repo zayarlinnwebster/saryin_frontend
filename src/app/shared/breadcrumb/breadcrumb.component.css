@@ -1,0 +1,8 @@
+.breadcrumb-item {
+    cursor: pointer;
+}
+
+.breadcrumb-item:hover {
+    color: black;
+    font-weight: bold;
+}

@@ -1,0 +1,134 @@
+<div class="login-container">
+  <div class="row">
+    <div class="col-lg-2"></div>
+
+    <div class="col-lg-3 p-5">
+      <div class="text-center logo-container">
+        <img
+          src="assets/images/saryin.png"
+          class="img-fluid"
+          width="180px"
+          alt="Sar Yin Logo"
+        />
+        <span class="ps-2 logo-text mt-3 fs-1 d-block">စာရင်း</span>
+      </div>
+    </div>
+
+    <div class="col-lg-4 p-5">
+      <form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+        <div class="card pt-3 pb-3">
+          <div class="text-center card-logo">
+            <img
+              src="assets/images/saryin.png"
+              class="img-fluid"
+              width="120px"
+              alt="Sar Yin Logo"
+            />
+            <span class="ps-2 logo-text mt-3 fs-2 d-block">စာရင်း</span>
+          </div>
+          <div class="card-body">
+            <h4 class="card-title fw-bold mt-3 mb-5 text-center">
+              သင့်အသုံးပြုသူအကောင့်သို့ ဝင်ရောက်ပါ။
+            </h4>
+
+            <ngb-alert
+              #selfClosingAlert
+              *ngIf="errorMessage$ | async as errorMessage"
+              type="danger"
+              (closed)="(errorMessage == '')"
+              >{{ errorMessage }}
+            </ngb-alert>
+
+            <div class="form-floating mb-3">
+              <input
+                type="email"
+                class="form-control"
+                id="username"
+                placeholder="သုံးစွဲသူအမည်"
+                formControlName="username"
+                [ngClass]="{
+                  'is-invalid': username.invalid && username.touched,
+                  'is-valid': username.valid && username.touched
+                }"
+              />
+              <label for="username">သုံးစွဲသူအမည်</label>
+              <div
+                *ngIf="username.invalid && username.touched"
+                id="username"
+                class="invalid-feedback"
+              >
+                <small *ngIf="username.hasError('required')">
+                  သုံးစွဲသူအမည်ဖြည့်ရန်လိုအပ်ပါတယ်။
+                </small>
+              </div>
+            </div>
+
+            <div class="input-group">
+              <div class="form-floating mb-3">
+                <input
+                  [type]="showPassword ? 'text' : 'password'"
+                  class="form-control"
+                  id="password"
+                  placeholder="လျှို့ဝှက်နံပါတ်"
+                  formControlName="password"
+                  [ngClass]="{
+                    'is-invalid': password.invalid && password.touched,
+                    'is-valid': password.valid && password.touched
+                  }"
+                />
+                <label for="password">လျှို့ဝှက်နံပါတ်</label>
+              </div>
+              <span
+                class="input-group-text"
+                style="height: 51px"
+                type="button"
+                id="passwordButton"
+                (click)="showPassword = !showPassword"
+              >
+                <i
+                  class="bi"
+                  [ngClass]="showPassword ? 'bi-eye' : 'bi-eye-slash'"
+                ></i>
+              </span>
+              <div
+                *ngIf="password.invalid && password.touched"
+                id="password"
+                class="invalid-feedback"
+              >
+                <small *ngIf="password.hasError('required')">
+                  လျှို့ဝှက်နံပါတ်ဖြည့်ရန်လိုအပ်ပါတယ်။
+                </small>
+              </div>
+            </div>
+
+            <div class="d-flex justify-content-center mt-4">
+              <button
+                *ngIf="authService.loginLoading | async"
+                class="btn btn-primary"
+                type="button"
+                disabled
+              >
+                <span
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                  aria-hidden="true"
+                ></span>
+                လုပ်ဆောင်နေသည်
+              </button>
+              <button
+                *ngIf="!(authService.loginLoading | async)"
+                type="submit"
+                class="btn btn-outline-primary"
+                [disabled]="userForm.invalid"
+              >
+                ဝင်ရောက်မည်။
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="col-lg-3"></div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,202 @@
+<div class="table-responsive">
+  <table class="table table-hover">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col" sortable="storedDate" (sort)="onSort($event)">
+          ရက်စွဲ (သွင်း)
+        </th>
+        <th scope="col" sortable="customer.fullName" (sort)="onSort($event)">
+          ကုန်သည်အမည်
+        </th>
+        <th scope="col" sortable="item.itemName" (sort)="onSort($event)">
+          ငါးအမည်
+        </th>
+        <th scope="col">စျေးနှုန်း</th>
+        <th scope="col">အရေအတွက် / အလေးချိန် (သွင်း)</th>
+        <th scope="col">အရေအတွက် / အလေးချိန် (ထုတ်)</th>
+        <th scope="col">အရေအတွက် / အလေးချိန် (ကျန်)</th>
+        <th scope="col">စုစုပေါင်းစျေးနှုန်း</th>
+        <th scope="col">လုပ်ဆောင်ချက်</th>
+      </tr>
+    </thead>
+
+    <ng-container
+      *ngIf="!(storeDetailService.stockItemListLoading | async); else loading"
+    >
+      <tbody *ngIf="stockItems$ | async as stockItems">
+        <ng-container *ngIf="stockItems.length > 0; else noStockItemData">
+          <ng-container *ngFor="let stockItem of stockItems; let i = index">
+            <tr>
+              <th scope="row">{{ i + 1 }}</th>
+              <td>{{ stockItem.storedDate | date : "YYYY-MM-dd" }}</td>
+              <td>
+                <a
+                  class="link-dark link-underline link-underline-opacity-0"
+                  [routerLink]="['/customer', stockItem.customer?.id]"
+                  [fragment]="'လွှဲငွေ'"
+                  >{{ stockItem.customer?.fullName }}</a
+                >
+              </td>
+              <td>{{ stockItem.item?.itemName }}</td>
+              <td>{{ stockItem.unitPrice | number }}</td>
+              <td>
+                {{ stockItem.qty | number }} /
+                {{ stockItem.weight | number : "1.1-2" }}
+              </td>
+              <td>
+                {{ stockItem.totalQtyOut || 0 | number }} /
+                {{ stockItem.totalWeightOut || 0 | number : "1.1-2" }}
+              </td>
+              <td>
+                <b>
+                  {{ stockItem.qty - (stockItem.totalQtyOut || 0) | number }}
+                  /
+                  {{
+                    stockItem.weight - (stockItem.totalWeightOut || 0)
+                      | number : "1.1-2"
+                  }}
+                </b>
+              </td>
+              <td>{{ stockItem.totalPrice | number }}</td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm me-1"
+                  (click)="openEditStockItem(stockItem)"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-danger btn-sm me-1"
+                  (click)="deleteStockItem(stockItem.id)"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-primary btn-sm me-1"
+                  (click)="toggleDetails(i)"
+                >
+                  <i
+                    class="bi"
+                    [ngClass]="!isDetailsOpen[i] ? 'bi-eye-slash' : 'bi-eye'"
+                  ></i>
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline-success btn-sm me-1"
+                  (click)="openCreateStockItemOut(stockItem)"
+                >
+                  <i class="bi bi-journal-minus"></i>
+                </button>
+              </td>
+            </tr>
+
+            <tr *ngIf="isDetailsOpen[i]">
+              <td colspan="100%">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col" colspan colspan="2">ရက်စွဲ (ထုန်)</th>
+                      <th scope="col">စျေးနှုန်း</th>
+                      <th scope="col">အရေအတွက် / အလေးချိန်</th>
+                      <th scope="col">ပွဲခ (ရာခိုင်နှုန်း)</th>
+                      <th scope="col">စုစုပေါင်းစျေးနှုန်း</th>
+                      <th scope="col" colspan="100%">လုပ်ဆောင်ချက်</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <ng-container
+                      *ngIf="stockItem.outItems; else noStockItemOutData"
+                    >
+                      <ng-container
+                        *ngFor="
+                          let stockItemOut of stockItem.outItems;
+                          let i = index
+                        "
+                      >
+                        <tr class="collapse-row">
+                          <td scope="row">#</td>
+                          <td colspan="2">
+                            {{ stockItemOut.outDate | date : "YYYY-MM-dd" }}
+                          </td>
+                          <td>
+                            {{ stockItemOut.unitPrice | number }}
+                          </td>
+                          <td>
+                            {{ stockItemOut.qty | number }} /
+                            {{ stockItemOut.weight | number : "1.1-2" }}
+                          </td>
+                          <td>
+                            {{ stockItemOut.commission | number : "1.1-2" }} %
+                          </td> 
+                          <td>
+                            {{ stockItemOut.totalPrice | number }}
+                          </td>
+                          <td>
+                            <button
+                              type="button"
+                              class="btn btn-outline-secondary btn-sm me-1"
+                              (click)="
+                                openEditStockItemOut(stockItem, stockItemOut)
+                              "
+                            >
+                              <i class="bi bi-pencil-square"></i>
+                            </button>
+                            <button
+                              type="button"
+                              class="btn btn-outline-danger btn-sm me-1"
+                              (click)="deleteStockItemOut(stockItemOut.id)"
+                            >
+                              <i class="bi bi-trash"></i>
+                            </button>
+                          </td>
+                        </tr>
+                      </ng-container>
+                    </ng-container>
+
+                    <ng-template #noStockItemOutData>
+                      <tr emptyRow></tr>
+                    </ng-template>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+          </ng-container>
+        </ng-container>
+
+        <ng-template #noStockItemData>
+          <tr emptyRow></tr>
+        </ng-template>
+      </tbody>
+    </ng-container>
+
+    <ng-template #loading>
+      <tbody loadingRow></tbody>
+    </ng-template>
+  </table>
+</div>
+
+<div class="d-flex flex-column flex-md-row justify-content-between p-2">
+  <ngb-pagination
+    [collectionSize]="(total$ | async)!"
+    [(page)]="stockItemService.page"
+    [pageSize]="stockItemService.limit"
+    [maxSize]="5"
+  >
+  </ngb-pagination>
+
+  <ng-select
+    style="width: auto"
+    name="limit"
+    [items]="limitOptions"
+    [bindLabel]="'label'"
+    [bindValue]="'value'"
+    [clearable]="false"
+    [(ngModel)]="stockItemService.limit"
+  >
+  </ng-select>
+</div>

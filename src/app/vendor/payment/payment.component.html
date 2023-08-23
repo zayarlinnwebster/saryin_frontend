@@ -1,0 +1,191 @@
+<div class="modal-header">
+    <h5 class="modal-title">ပွဲရုံလွှဲငွေအသစ် သိမ်းဆည်းပါ။</h5>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="activeModal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <form [formGroup]="vendorPaymentForm" (ngSubmit)="onSubmit()">
+    <div class="modal-body">
+      <div class="mb-3">
+        <label for="paymentDate" class="form-label">ရက်စွဲ</label>
+        <div class="input-group">
+          <input
+            class="form-control"
+            placeholder="yyyy-mm-dd"
+            name="paymentDate"
+            ngbDatepicker
+            #d="ngbDatepicker"
+            formControlName="paymentDate"
+            [ngClass]="{
+              'is-invalid': paymentDate.invalid && paymentDate.touched
+            }"
+          />
+          <button
+            class="btn btn-outline-secondary bi bi-calendar3"
+            (click)="d.toggle()"
+            type="button"
+          ></button>
+  
+          <div
+            *ngIf="paymentDate.invalid && paymentDate.touched"
+            id="paymentDate"
+            class="invalid-feedback"
+          >
+            <small *ngIf="paymentDate.hasError('required')">
+              ရက်စွဲဖြည့်ရန်လိုအပ်ပါတယ်။
+            </small>
+          </div>
+        </div>
+      </div>
+  
+      <div class="mb-3">
+        <label for="vendorId" class="form-label">ပွဲရုံနာမည်</label>
+        <ng-select
+          id="vendorId"
+          [loading]="(vendorService.dropdownLoading$ | async) ?? false"
+          [items]="dropdownVendors$ | async"
+          [bindLabel]="'vendorName'"
+          [bindValue]="'id'"
+          placeholder="ပွဲရုံအမည်ကို ရွေးပါ။"
+          [typeahead]="vendorService.dropdownSearch$"
+          formControlName="vendorId"
+          [ngClass]="{
+            'is-invalid': vendorId.invalid && vendorId.touched
+          }"
+          (change)="onSelectVendor($event)"
+          autofocus
+        >
+        </ng-select>
+        <div
+          *ngIf="vendorId.invalid && vendorId.touched"
+          id="vendorId"
+          class="invalid-feedback"
+        >
+          <small *ngIf="vendorId.hasError('required')">
+            ပွဲရုံအမည်ရွေးရန်လိုအပ်ပါတယ်။
+          </small>
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <label for="remainingAmount" class="form-label">လက်ကျန်ငွေ</label>
+        <input
+          class="form-control"
+          type="text"
+          id="paidAmount"
+          [value]="remainingAmount | number"
+          readonly
+        />
+      </div>
+  
+      <div class="mb-3">
+        <label for="paidAmount" class="form-label">ပေးဆောင်သောပမာဏ</label>
+        <input
+          class="form-control"
+          type="number"
+          id="paidAmount"
+          formControlName="paidAmount"
+          placeholder="ပေးဆောင်သောပမာဏထည့်သွင်းပါ။"
+          [ngClass]="{
+            'is-invalid': paidAmount.invalid && paidAmount.touched
+          }"
+        />
+        <div id="paidAmount" class="form-text">
+          ကျန်ငွေ ({{
+            remainingAmount -
+              (editVendorPayment
+                ? paidAmount.value - editVendorPayment.paidAmount
+                : paidAmount.value)
+          }})
+        </div>
+        <div
+          *ngIf="paidAmount.invalid && paidAmount.touched"
+          id="paidAmount"
+          class="invalid-feedback"
+        >
+          <small *ngIf="paidAmount.hasError('required')">
+            ပေးဆောင်သောပမာဏထည်းသွင်းရန်လိုအပ်ပါသည်။
+          </small>
+          <small *ngIf="paidAmount.hasError('min')">
+            ပေးဆောင်သောပမာဏသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+          </small>
+        </div>
+      </div>
+  
+      <div class="mb-3">
+        <label for="paidBy" class="form-label">ပေးဆောင်ပုံ</label>
+        <ng-select
+          id="paidBy"
+          formControlName="paidBy"
+          [items]="paidTypes"
+        ></ng-select>
+        <div
+          *ngIf="paidBy.invalid && paidBy.touched"
+          id="paidBy"
+          class="invalid-feedback"
+        >
+          <small *ngIf="paidBy.hasError('required')">
+              ပေးဆောင်ပုံထည်းသွင်းရန်လိုအပ်ပါသည်။
+          </small>
+        </div>
+      </div>
+  
+      <div class="mb-3">
+        <label for="transactionNo" class="form-label">ငွေလွှဲနံပါတ်</label>
+        <input
+          class="form-control"
+          type="text"
+          id="transactionNo"
+          formControlName="transactionNo"
+          placeholder="ငွေလွှဲနံပါတ်ထည့်သွင်းပါ။"
+          [ngClass]="{
+            'is-invalid': transactionNo.invalid && transactionNo.touched
+          }"
+        />
+        <div
+          *ngIf="transactionNo.invalid && transactionNo.touched"
+          id="transactionNo"
+          class="invalid-feedback"
+        >
+          <small *ngIf="transactionNo.hasError('required')">
+              ငွေလွှဲနံပါတ်အပ်ပါသည်။
+          </small>
+        </div>
+      </div>
+    </div>
+  
+    <div class="modal-footer">
+      <button
+        type="button"
+        class="btn btn-outline-dark"
+        (click)="activeModal.dismiss('Cross click')"
+      >
+        ပိတ်မည်။
+      </button>
+      <button
+        *ngIf="!(vendorPaymentService.createLoading$ | async)"
+        type="submit"
+        class="btn btn-outline-primary"
+        [disabled]="vendorPaymentForm.invalid"
+      >
+        သိမ်းဆည်းမည်။
+      </button>
+      <button
+        *ngIf="vendorPaymentService.createLoading$ | async"
+        class="btn btn-primary"
+        type="button"
+        disabled
+      >
+        <span
+          class="spinner-border spinner-border-sm"
+          role="status"
+          aria-hidden="true"
+        ></span>
+        လုပ်ဆောင်နေသည်
+      </button>
+    </div>
+  </form>
+  
