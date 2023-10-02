@@ -1,6 +1,6 @@
 import { Component, QueryList, ViewChildren } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { EMPTY, Observable, switchMap, takeUntil } from 'rxjs';
+import { EMPTY, Observable, map, switchMap, takeUntil } from 'rxjs';
 import {
   SortEvent,
   SortableDirective,
@@ -12,23 +12,40 @@ import { AlertModalConfig } from 'src/app/shared/alert-modal/alert-modal.config'
 import { InvoiceComponent } from '../../invoice/invoice.component';
 import { DateRangeService } from 'src/app/services/date-range/date-range.service';
 import { LIMIT_OPTIONS } from 'src/app/shared/constants';
+import { InvoiceDetail } from 'src/app/models/invoice/invoice-detail';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 
 @Component({
   selector: 'app-invoice-list',
   templateUrl: './invoice-list.component.html',
   styleUrls: ['./invoice-list.component.css'],
+  animations: [
+    trigger('collapse', [
+      state('open', style({ height: '*' })),
+      state('closed', style({ height: '0' })),
+      transition('open <=> closed', animate('300ms ease-in-out')),
+    ]),
+  ],
 })
 export class InvoiceListComponent {
   limitOptions: object[] = LIMIT_OPTIONS;
   invoices$: Observable<Invoice[]>;
+  invoiceDetails$: Observable<InvoiceDetail[]>;
+
   total$: Observable<number>;
   totalAmount$: Observable<any>;
 
-  isDetailsOpen: boolean[] = [];
+  detailOpenInvoiceId: number = 0;
 
   alertModalConfig: AlertModalConfig = {
     modalTitle: 'နယ်ပို့စာရင်းပြင်ဆင်ခြင်း။',
-    hideFooter: false,
+    hideFooter: true,
     dismissButtonLabel: 'လုပ်မည်။',
     closeButtonLabel: 'မလုပ်ပါ။',
   };
@@ -42,6 +59,7 @@ export class InvoiceListComponent {
     private _modalService: NgbModal,
     private _alertModalService: AlertModalService
   ) {
+    this.invoiceDetails$ = EMPTY;
     this.invoices$ = invoiceService.invoices$;
     this.total$ = invoiceService.total$;
     this.totalAmount$ = invoiceService.totalAmount$;
@@ -54,8 +72,16 @@ export class InvoiceListComponent {
     this._alertModalService.setAlertModalConfig(this.alertModalConfig);
   }
 
-  toggleDetails(index: number): void {
-    this.isDetailsOpen[index] = !this.isDetailsOpen[index];
+  toggleDetails(invoiceId: number): void {
+    if (this.detailOpenInvoiceId == invoiceId) {
+      this.detailOpenInvoiceId = 0;
+    } else {
+      this.detailOpenInvoiceId = invoiceId;
+
+      this.invoiceDetails$ = this.invoiceService
+        .getInvoice(invoiceId)
+        .pipe(map((invoice) => invoice.invoiceDetails));
+    }
   }
 
   onSort({ column, direction }: SortEvent) {
@@ -121,5 +147,4 @@ export class InvoiceListComponent {
         },
       });
   }
-  
 }

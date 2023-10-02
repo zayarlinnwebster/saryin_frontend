@@ -54,7 +54,7 @@ export class CustomerDetailService {
   private _listState: ListState = {
     id: 0,
     page: 1,
-    limit: 10,
+    limit: 15,
     searchList: '',
     fromDate: this.dateRangeService.monthFirstDate,
     toDate: this.dateRangeService.monthLastDate,

@@ -3,4 +3,7 @@ export interface StoreUsage {
     totalQtyOut: number;
     totalWeightIn: number;
     totalWeightOut: number;
+    totalPriceIn: number;
+    totalPriceOut: number;
+    totalCommissionFee: number;
 }

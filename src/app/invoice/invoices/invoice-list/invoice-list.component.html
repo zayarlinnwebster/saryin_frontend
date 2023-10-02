@@ -164,17 +164,19 @@
                 <button
                   type="button"
                   class="btn btn-outline-primary btn-sm me-1"
-                  (click)="toggleDetails(i)"
+                  (click)="toggleDetails(invoice.id)"
                 >
                   <i
                     class="bi"
-                    [ngClass]="!isDetailsOpen[i] ? 'bi-eye-slash' : 'bi-eye'"
+                    [ngClass]="
+                      detailOpenInvoiceId != invoice.id ? 'bi-eye-slash' : 'bi-eye'
+                    "
                   ></i>
                 </button>
               </td>
             </tr>
 
-            <tr *ngIf="isDetailsOpen[i]">
+            <tr *ngIf="detailOpenInvoiceId == invoice.id">
               <td colspan="100%">
                 <table class="table table-sm">
                   <thead>
@@ -190,48 +192,44 @@
                       <th colspan="100%">စုစုပေါင်းတန်ဖိုး</th>
                     </tr>
                   </thead>
-                  <tbody>
-                    <ng-container
-                      *ngIf="invoice.invoiceDetails; else noInvoiceDetailData"
+                  <tbody
+                    *ngIf="
+                      invoiceDetails$ | async as invoiceDetails;
+                      else detailListloading
+                    "
+                  >
+                    <tr
+                      *ngFor="
+                        let invoiceDetail of invoiceDetails;
+                        let i = index
+                      "
+                      class="collapse-row"
                     >
-                      <ng-container
-                        *ngFor="
-                          let invoiceDetail of invoice.invoiceDetails;
-                          let i = index
-                        "
-                      >
-                        <tr class="collapse-row">
-                          <td scope="row">#</td>
-                          <td colspan="2">
-                            <a
-                              class="link-dark link-underline link-underline-opacity-0"
-                              [routerLink]="[
-                                '/vendor',
-                                invoiceDetail.vendor?.id
-                              ]"
-                              [fragment]="'သွင်းငွေ'"
-                              >{{ invoiceDetail.vendor?.vendorName }}</a
-                            >
-                          </td>
-                          <td colspan="2">
-                            {{ invoiceDetail.item?.itemName }}
-                          </td>
-                          <td>{{ invoiceDetail.qty | number }}</td>
-                          <td>{{ invoiceDetail.weight }}</td>
-                          <td>{{ invoiceDetail.unitPrice | number }}</td>
-                          <td>{{ invoiceDetail.laborFee }}</td>
-                          <td>{{ invoiceDetail.generalFee }}</td>
-                          <td colspan="100%">
-                            {{ invoiceDetail.totalPrice | number }}
-                          </td>
-                        </tr>
-                      </ng-container>
-                    </ng-container>
-
-                    <ng-template #noInvoiceDetailData>
-                      <tr emptyRow></tr>
-                    </ng-template>
+                      <td scope="row">{{ i + 1 }}</td>
+                      <td colspan="2">
+                        <a
+                          class="link-dark link-underline link-underline-opacity-0"
+                          [routerLink]="['/vendor', invoiceDetail.vendor?.id]"
+                          [fragment]="'သွင်းငွေ'"
+                          >{{ invoiceDetail.vendor?.vendorName }}</a
+                        >
+                      </td>
+                      <td colspan="2">
+                        {{ invoiceDetail.item?.itemName }}
+                      </td>
+                      <td>{{ invoiceDetail.qty | number }}</td>
+                      <td>{{ invoiceDetail.weight }}</td>
+                      <td>{{ invoiceDetail.unitPrice | number }}</td>
+                      <td>{{ invoiceDetail.laborFee }}</td>
+                      <td>{{ invoiceDetail.generalFee }}</td>
+                      <td colspan="100%">
+                        {{ invoiceDetail.totalPrice | number }}
+                      </td>
+                    </tr>
                   </tbody>
+                  <ng-template #detailListloading>
+                    <tbody loadingRow></tbody>
+                  </ng-template>
                 </table>
               </td>
             </tr>
@@ -256,6 +254,7 @@
     [(page)]="invoiceService.page"
     [pageSize]="invoiceService.limit"
     [maxSize]="5"
+    [hidden]="!invoiceService.limit"
   >
   </ngb-pagination>
 

@@ -95,7 +95,7 @@
     <div class="col-md-6">
       <div class="row">
         <div class="col-6 mb-3">
-          ဖုန်းနံပါတ် <span class="float-end">:</span>
+          ဖုန်းနံပါတ် <span class="float-end">|</span>
         </div>
         <div class="col-6 mb-3">
           <b>{{ customer.phoneNo || "-" }}</b>
@@ -103,7 +103,7 @@
       </div>
 
       <div class="row">
-        <div class="col-6 mb-3">လိပ်စာ <span class="float-end">:</span></div>
+        <div class="col-6 mb-3">လိပ်စာ <span class="float-end">|</span></div>
         <div class="col-6 mb-3">
           <b>{{ customer.address || "-" }}</b>
         </div>
@@ -111,7 +111,7 @@
 
       <div class="row">
         <div class="col-6 mb-3">
-          ကော်မရှင် (ရာခိုင်နှုန်း)<span class="float-end">:</span>
+          ကော်မရှင် (ရာခိုင်နှုန်း)<span class="float-end">|</span>
         </div>
         <div class="col-6 mb-3">
           <b>{{ customer.commission | number : "1.1-2" }} %</b>
@@ -121,7 +121,7 @@
       <ng-container *ngIf="customerUsage$ | async as customerUsage">
         <div class="row">
           <div class="col-6 mb-3">
-            လွှဲငွေစုစုပေါင်း <span class="float-end">:</span>
+            လွှဲငွေစုစုပေါင်း <span class="float-end">|</span>
           </div>
           <div class="col-6 mb-3">
             <b>{{ customerUsage.totalCustomerPayment || 0 | number }}</b>
@@ -130,7 +130,7 @@
 
         <div class="row">
           <div class="col-6 mb-3">
-            နယ်ပို့စာရင်းငွေစုစုပေါင်း <span class="float-end">:</span>
+            နယ်ပို့စာရင်းငွေစုစုပေါင်း <span class="float-end">|</span>
           </div>
           <div class="col-6 mb-3">
             <b>{{ customerUsage.totalCustomerInvoice || 0 | number }}</b>
@@ -139,7 +139,7 @@
 
         <div class="row">
           <div class="col-6 mb-3">
-            ကော်မရှင်ခ <span class="float-end">:</span>
+            ကော်မရှင်ခ <span class="float-end">|</span>
           </div>
           <div class="col-6 mb-3">
             <b
@@ -152,7 +152,7 @@
         </div>
 
         <div class="row">
-          <div class="col-6 mb-3">ကျန်ငွေ<span class="float-end">:</span></div>
+          <div class="col-6 mb-3">ကျန်ငွေ<span class="float-end">|</span></div>
           <div class="col-6 mb-3">
             <b
               >{{

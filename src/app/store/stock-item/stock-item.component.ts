@@ -1,7 +1,7 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnDestroy, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
-import { Observable, combineLatest } from 'rxjs';
+import { Observable, Subject, combineLatest } from 'rxjs';
 import { Customer } from 'src/app/models/customer/customer';
 import { Item } from 'src/app/models/item';
 import { StockItem } from 'src/app/models/stock-item';
@@ -18,9 +18,12 @@ import { AlertModalConfig } from 'src/app/shared/alert-modal/alert-modal.config'
   templateUrl: './stock-item.component.html',
   styleUrls: ['./stock-item.component.css']
 })
-export class StockItemComponent {
+export class StockItemComponent implements OnDestroy{
   @Input()
   editStockItem!: StockItem;
+
+  @Output()
+  isSuccess: Subject<void> = new Subject<void>();
 
   dropdownCustomers$: Observable<Customer[]>;
   dropdownItem$: Observable<Item[]>;
@@ -120,6 +123,10 @@ export class StockItemComponent {
     });
   }
 
+  ngOnDestroy(): void {
+    this.isSuccess.complete();
+  }
+
   onSubmit() {
     if (this.stockItemForm.invalid) {
       return;
@@ -135,6 +142,7 @@ export class StockItemComponent {
               'လှောင်ကုန်အသစ်သိမ်းဆည်းပြီးပါပြီ။',
               'success'
             );
+            this.isSuccess.next();
           },
           error: (err) => {
             this._alertModalService.open(err, 'danger');
@@ -148,6 +156,7 @@ export class StockItemComponent {
             'လှောင်ကုန်အသစ်သိမ်းဆည်းပြီးပါပြီ။',
             'success'
           );
+          this.isSuccess.next();
         },
         error: (err) => {
           this._alertModalService.open(err, 'danger');

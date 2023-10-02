@@ -1,6 +1,6 @@
 <div class="table-responsive">
   <table
-    class="table table-bordered"
+    class="table table-bordered table-hover"
     [ngClass]="{
       'border-danger':
         invoiceDetails.invalid && invoiceDetails.hasError('noItems')
@@ -14,21 +14,31 @@
     </caption>
     <thead>
       <tr class="text-nowrap">
-        <th class="w-15">ပွဲရုံအမည်</th>
-        <th class="w-15">ငါးအမည်</th>
-        <th class="w-10">အရေအတွက်</th>
-        <th class="w-20">အလေးချိန်</th>
-        <th class="w-15">စျေးနှုန်း</th>
-        <th class="w-15">အလုပ်သမားခ</th>
-        <th class="w-15">အထွေထွေခ</th>
-        <th class="w-15">စုစုပေါင်းစျေးနှုန်း</th>
-        <th class="w-10">ဖျက်ရန်</th>
+        <th>ရှင်းပီး</th>
+        <th>ပွဲရုံအမည်</th>
+        <th>ငါးအမည်</th>
+        <th>အရေအတွက်</th>
+        <th>အလေးချိန်</th>
+        <th>စျေးနှုန်း</th>
+        <th>အလုပ်သမားခ</th>
+        <th>အထွေထွေခ</th>
+        <th>စုစုပေါင်းစျေးနှုန်း</th>
+        <th>မှတ်ချက်</th>
+        <th>လုပ်ဆောင်ချက်</th>
       </tr>
     </thead>
     <tbody>
       <ng-container *ngIf="invoiceDetails.controls.length > 0; else noData">
         <tr *ngFor="let invoiceDetailForm of invoiceDetailForms; let i = index">
           <ng-container [formGroup]="invoiceDetailForm">
+            <td class="text-center align-content-center">
+              <input
+                class="form-check-input"
+                type="checkbox"
+                formControlName="isBillCleared"
+                id="isBillCleared"
+              />
+            </td>
             <td>
               <div>
                 <ng-select
@@ -160,7 +170,10 @@
                 <small
                   *ngIf="invoiceDetailForm.get('weight')?.hasError('required')"
                 >
-                  အရေအတွက်ထည့်သွင်းရန်လိုအပ်ပါသည်။
+                  အလေးချိန်ထည့်သွင်းရန်လိုအပ်ပါသည်။
+                </small>
+                <small *ngIf="invoiceDetailForm.get('weight')?.hasError('min')">
+                  အလေးချိန်သည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
                 </small>
               </div>
             </td>
@@ -191,7 +204,7 @@
                     invoiceDetailForm.get('unitPrice')?.hasError('required')
                   "
                 >
-                  စုစုပေါင်းစျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
+                  စျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
                 </small>
                 <small
                   *ngIf="invoiceDetailForm.get('unitPrice')?.hasError('min')"
@@ -297,16 +310,131 @@
                     invoiceDetailForm.get('totalPrice')?.hasError('required')
                   "
                 >
-                  စျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
+                  စုစုပေါင်းစျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
                 </small>
                 <small
                   *ngIf="invoiceDetailForm.get('totalPrice')?.hasError('min')"
                 >
-                  စျေးနှုန်းသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+                  စုစုပေါင်းစျေးနှုန်းသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
                 </small>
               </div>
             </td>
             <td>
+              <input
+                type="text"
+                class="form-control"
+                id="remark"
+                formControlName="remark"
+              />
+            </td>
+            <td>
+              <ng-template #popTitle>သိုလှောင်ရုံ ရွေးပါ</ng-template>
+              <ng-template #popContent>
+                <div class="form-check mb-3">
+                  <input
+                    class="form-check-input"
+                    type="checkbox"
+                    formControlName="isStoreItem"
+                    id="isStoreItem"
+                  />
+                  <label class="form-check-label" for="isStoreItem">
+                    ကုန်လှောင်မည်။
+                  </label>
+                </div>
+                <div class="mb-3">
+                  <ng-select
+                    id="storeId"
+                    [loading]="(storeService.dropdownLoading$ | async) ?? false"
+                    [items]="dropdownStore$ | async"
+                    [bindLabel]="'storeName'"
+                    [bindValue]="'id'"
+                    placeholder="သိုလှောင်ရုံအမည် ရွေးပါ။"
+                    [typeahead]="storeService.dropdownSearch$"
+                    formControlName="storeId"
+                    [ngClass]="{
+                      'is-invalid':
+                        invoiceDetailForm.get('storeId')?.invalid &&
+                        invoiceDetailForm.get('storeId')?.touched
+                    }"
+                  >
+                  </ng-select>
+                  <div
+                    *ngIf="
+                      invoiceDetailForm.get('storeId')?.invalid &&
+                      invoiceDetailForm.get('storeId')?.touched
+                    "
+                    id="storeId"
+                    class="invalid-feedback"
+                  >
+                    <small
+                      *ngIf="
+                        invoiceDetailForm.get('storeId')?.hasError('required')
+                      "
+                    >
+                      သိုလှောင်ရုံအမည်ရွေးရန်လိုအပ်ပါတယ်။
+                    </small>
+                  </div>
+                </div>
+                <div class="mb-3">
+                  <label for="storedDate" class="form-label"
+                    >ရက်စွဲ (သွင်း)</label
+                  >
+                  <div class="input-group">
+                    <input
+                      class="form-control"
+                      placeholder="yyyy-mm-dd"
+                      name="storedDate"
+                      ngbDatepicker
+                      #d="ngbDatepicker"
+                      formControlName="storedDate"
+                      [ngClass]="{
+                        'is-invalid':
+                          invoiceDetailForm.get('storedDate')?.invalid &&
+                          invoiceDetailForm.get('storedDate')?.touched
+                      }"
+                    />
+                    <button
+                      class="btn btn-outline-secondary bi bi-calendar3"
+                      (click)="d.toggle()"
+                      type="button"
+                    ></button>
+
+                    <div
+                      *ngIf="
+                        invoiceDetailForm.get('storedDate')?.invalid &&
+                        invoiceDetailForm.get('storedDate')?.touched
+                      "
+                      id="storedDate"
+                      class="invalid-feedback"
+                    >
+                      <small
+                        *ngIf="
+                          invoiceDetailForm
+                            .get('storedDate')
+                            ?.hasError('required')
+                        "
+                      >
+                        ရက်စွဲဖြည့်ရန်လိုအပ်ပါတယ်။
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+              <button
+                type="button"
+                class="btn btn-sm me-1"
+                [ngClass]="
+                  invoiceDetailForm.get('isStoreItem')?.value
+                    ? 'btn-outline-primary'
+                    : 'btn-outline-secondary'
+                "
+                [ngbPopover]="popContent"
+                [popoverTitle]="popTitle"
+                [autoClose]="'outside'"
+                placement="start"
+              >
+                <fa-icon [icon]="faWarehouse"></fa-icon>
+              </button>
               <button
                 type="button"
                 class="btn btn-sm btn-outline-danger"
@@ -326,7 +454,7 @@
 
     <tfoot>
       <tr>
-        <th colspan="7" class="text-end">စုစုပေါင်းငွေပမာဏ</th>
+        <th colspan="7" class="text-end">သင့်ငွေ</th>
         <th colspan="2">{{ totalItemAmount.value | number }}</th>
       </tr>
     </tfoot>

@@ -96,7 +96,7 @@
     <div class="col-md-6">
       <div class="row">
         <div class="col-6 mb-3">
-          ဖုန်းနံပါတ် <span class="float-end">:</span>
+          ဖုန်းနံပါတ် <span class="float-end">|</span>
         </div>
         <div class="col-6 mb-3">
           <b>{{ vendor.phoneNo || "-" }}</b>
@@ -104,7 +104,7 @@
       </div>
 
       <div class="row">
-        <div class="col-6 mb-3">လိပ်စာ <span class="float-end">:</span></div>
+        <div class="col-6 mb-3">လိပ်စာ <span class="float-end">|</span></div>
         <div class="col-6 mb-3">
           <b>{{ vendor.address || "-" }}</b>
         </div>
@@ -113,7 +113,7 @@
       <ng-container *ngIf="vendorUsage$ | async as vendorUsage">
         <div class="row">
           <div class="col-6 mb-3">
-            သွင်းငွေစုစုပေါင်း <span class="float-end">:</span>
+            သွင်းငွေစုစုပေါင်း <span class="float-end">|</span>
           </div>
           <div class="col-6 mb-3">
             <b>{{ vendorUsage.totalVendorPayment || 0 | number }}</b>
@@ -122,7 +122,7 @@
 
         <div class="row">
           <div class="col-6 mb-3">
-            နယ်ပို့စာရင်းငွေစုစုပေါင်း <span class="float-end">:</span>
+            နယ်ပို့စာရင်းငွေစုစုပေါင်း <span class="float-end">|</span>
           </div>
           <div class="col-6 mb-3">
             <b>{{ vendorUsage.totalVendorInvoice || 0 | number }}</b>
@@ -130,12 +130,21 @@
         </div>
 
         <div class="row">
-          <div class="col-6 mb-3">ကျန်ငွေ <span class="float-end">:</span></div>
+          <div class="col-6 mb-3">ကျန်ငွေ <span class="float-end">|</span></div>
           <div class="col-6 mb-3">
             <b>{{
               vendorUsage.totalVendorInvoice - vendorUsage.totalVendorPayment
                 | number
             }}</b>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6 mb-3">
+            ရှင်းပြီးငွေစုစုပေါင်း  <span class="float-end">|</span>
+          </div>
+          <div class="col-6 mb-3">
+            <b>{{ vendorUsage.totalBillClearedVendorInvoice || 0 | number }}</b>
           </div>
         </div>
       </ng-container>

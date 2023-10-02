@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import {
@@ -7,6 +7,7 @@ import {
   Subject,
   catchError,
   debounceTime,
+  finalize,
   map,
   shareReplay,
   switchMap,
@@ -52,7 +53,7 @@ export class InvoiceDetailService {
 
   private _listListState: ListState = {
     page: 1,
-    limit: 10,
+    limit: 15,
     searchList: '',
     fromDate: this.dateRangeService.monthFirstDate,
     toDate: this.dateRangeService.monthLastDate,
@@ -222,4 +223,20 @@ export class InvoiceDetailService {
     console.error('An error occurred:', error);
     return throwError(() => error);
   }
+
+  updateBillClear(invoiceDetailId: number, isBillCleared: boolean): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    return this.http.patch<any>(`api/v1/invoice/detail/${invoiceDetailId}/bill-clear`, { isBillCleared }, httpOptions).pipe(
+      catchError(this.handleError),
+      finalize(() => {
+        this._listSearch$.next();
+      })
+    );
+  }
+
 }

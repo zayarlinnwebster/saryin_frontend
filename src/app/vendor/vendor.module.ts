@@ -8,7 +8,7 @@ import { SharedModule } from '../shared/shared.module';
 import { PaymentComponent } from './payment/payment.component';
 import { PaymentListComponent } from './payment-list/payment-list.component';
 import { VendorDetailComponent } from './vendor-detail/vendor-detail.component';
-import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { VendorPaymentComponent } from './vendor-detail/vendor-payment/vendor-payment.component';
 import { VendorInvoiceComponent } from './vendor-detail/vendor-invoice/vendor-invoice.component';
 
@@ -18,7 +18,8 @@ import { VendorInvoiceComponent } from './vendor-detail/vendor-invoice/vendor-in
     CommonModule,
     VendorRoutingModule,
     SharedModule,
-    NgbNavModule
+    NgbNavModule,
+    NgbPopoverModule
   ],
 })
 export class VendorModule {}

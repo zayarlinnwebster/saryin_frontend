@@ -53,7 +53,7 @@ export class StoreService {
 
   private _listListState: ListState = {
     page: 1,
-    limit: 10,
+    limit: 15,
     searchList: '',
     sortColumn: '',
     sortDirection: '',

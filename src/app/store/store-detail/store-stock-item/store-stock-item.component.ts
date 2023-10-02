@@ -6,7 +6,7 @@ import {
   ViewChildren,
 } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { EMPTY, Observable, switchMap, takeUntil, tap } from 'rxjs';
+import { EMPTY, Observable, switchMap, take, takeUntil, tap } from 'rxjs';
 import {
   SortEvent,
   SortableDirective,
@@ -82,6 +82,10 @@ export class StoreStockItemComponent {
       animation: true,
     });
     modalRef.componentInstance.editStockItem = stockItem;
+
+    modalRef.componentInstance.isSuccess
+      .pipe(take(1))
+      .subscribe(() => (this.storeDetailService.searchList = ''));
   }
 
   deleteStockItem(stockItemId: number) {
@@ -112,6 +116,7 @@ export class StoreStockItemComponent {
             'လှောင်ကုန်စာရင်းဖျက်သိမ်းပြီးပါပြီ။',
             'success'
           );
+          this.storeDetailService.searchList = '';
         },
         error: (err) => {
           this._alertModalService.open(err, 'danger');
@@ -126,6 +131,10 @@ export class StoreStockItemComponent {
       animation: true,
     });
     modalRef.componentInstance.stockItem = stockItem;
+
+    modalRef.componentInstance.isSuccess
+      .pipe(take(1))
+      .subscribe(() => (this.storeDetailService.searchList = ''));
   }
 
   openEditStockItemOut(stockItem: StockItem, stockItemOut: StockItemOut) {
@@ -136,6 +145,10 @@ export class StoreStockItemComponent {
     });
     modalRef.componentInstance.stockItem = stockItem;
     modalRef.componentInstance.editStockItemOut = stockItemOut;
+
+    modalRef.componentInstance.isSuccess
+      .pipe(take(1))
+      .subscribe(() => (this.storeDetailService.searchList = ''));
   }
 
   deleteStockItemOut(stockItemOutId: number) {
@@ -167,11 +180,11 @@ export class StoreStockItemComponent {
             'လှောင်ကုန်ထုတ်ယူမှုစာရင်းဖျက်သိမ်းပြီးပါပြီ။',
             'success'
           );
+          this.storeDetailService.searchList = '';
         },
         error: (err) => {
           this._alertModalService.open(err, 'danger');
         },
       });
   }
-
 }

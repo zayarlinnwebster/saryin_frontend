@@ -5,17 +5,21 @@ import { EMPTY, Observable, switchMap, takeUntil } from 'rxjs';
 import { DateRangeService } from 'src/app/services/date-range/date-range.service';
 import { LIMIT_OPTIONS } from 'src/app/shared/constants';
 import { Invoice } from 'src/app/models/invoice/invoice';
-import { SortEvent, SortableDirective } from 'src/app/directives/sortable/sortable.directive';
+import {
+  SortEvent,
+  SortableDirective,
+} from 'src/app/directives/sortable/sortable.directive';
 import { AlertModalService } from 'src/app/services/alert-modal/alert-modal.service';
 import { AlertModalConfig } from 'src/app/shared/alert-modal/alert-modal.config';
 import { InvoiceComponent } from 'src/app/invoice/invoice/invoice.component';
 import { InvoiceService } from 'src/app/services/invoice/invoice.service';
 import { InvoiceDetail } from 'src/app/models/invoice/invoice-detail';
+import { InvoiceDetailService } from 'src/app/services/invoice-detail/invoice-detail.service';
 
 @Component({
   selector: 'app-vendor-invoice',
   templateUrl: './vendor-invoice.component.html',
-  styleUrls: ['./vendor-invoice.component.css']
+  styleUrls: ['./vendor-invoice.component.css'],
 })
 export class VendorInvoiceComponent {
   limitOptions: object[] = LIMIT_OPTIONS;
@@ -36,9 +40,10 @@ export class VendorInvoiceComponent {
   constructor(
     public vendorDetailService: VendorDetailService,
     public dateRangeService: DateRangeService,
+    public invoiceDetailService: InvoiceDetailService,
     private _modalService: NgbModal,
     private _alertModalService: AlertModalService,
-    private _invoiceService: InvoiceService,
+    private _invoiceService: InvoiceService
   ) {
     this.invoiceDetails$ = vendorDetailService.vendorInvoices;
     this.total$ = vendorDetailService.invoiceTotal;

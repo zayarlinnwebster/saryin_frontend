@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import {
   AbstractControl,
   FormBuilder,
@@ -28,6 +28,9 @@ export class StockItemOutComponent implements OnInit, OnDestroy {
   @Input()
   editStockItemOut!: StockItemOut;
 
+  @Output()
+  isSuccess: Subject<void> = new Subject<void>();
+
   destroy$: Subject<void> = new Subject<void>();
 
   stockItemOutForm: FormGroup;
@@ -49,11 +52,11 @@ export class StockItemOutComponent implements OnInit, OnDestroy {
       unitPrice: [0, [Validators.required, Validators.min(0)]],
       qty: [
         0,
-        [Validators.required, Validators.min(1), this.exceedQtyValidator()],
+        [Validators.required, Validators.min(0), this.exceedQtyValidator()],
       ],
       weight: [
         0,
-        [Validators.required, Validators.min(1), this.exceedWeightValidator()],
+        [Validators.required, Validators.min(0), this.exceedWeightValidator()],
       ],
       stockItemId: [null, Validators.required],
       commission: [
@@ -135,6 +138,7 @@ export class StockItemOutComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
+    this.isSuccess.complete();
   }
 
   onSubmit() {
@@ -156,6 +160,7 @@ export class StockItemOutComponent implements OnInit, OnDestroy {
               'လှောင်ကုန်ထုတ်ယူမှုသိမ်းဆည်းပြီးပါပြီ။',
               'success'
             );
+            this.isSuccess.next();
           },
           error: (err) => {
             this._alertModalService.open(err, 'danger');
@@ -172,6 +177,7 @@ export class StockItemOutComponent implements OnInit, OnDestroy {
               'လှောင်ကုန်ထုတ်ယူမှုသိမ်းဆည်းပြီးပါပြီ။',
               'success'
             );
+            this.isSuccess.next();
           },
           error: (err) => {
             this._alertModalService.open(err, 'danger');

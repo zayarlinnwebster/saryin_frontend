@@ -13,4 +13,8 @@ export const LIMIT_OPTIONS: object[] = [
         label: "တစ်မျက်နှာလျှင် ၂၀ခု",
         value: 20,
     },
+    {
+        label: "အကန့်သတ်မရှိ",
+        value: '',
+    },
 ];

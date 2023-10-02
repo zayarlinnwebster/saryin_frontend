@@ -39,7 +39,7 @@ export class StockItemOutService {
 
   private _listListState: ListState = {
     page: 1,
-    limit: 10,
+    limit: 15,
     searchList: '',
     fromDate: this.dateRangeService.monthFirstDate,
     toDate: this.dateRangeService.monthLastDate,

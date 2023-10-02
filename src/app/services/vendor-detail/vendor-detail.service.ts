@@ -63,12 +63,12 @@ export class VendorDetailService {
   private _paymentTotal$ = new BehaviorSubject<number>(0);
 
   private _vendorUsageSearch$ = new Subject<void>();
-  private _vendorUsage$ = new BehaviorSubject<VendorUsage>({ totalVendorInvoice: 0, totalVendorPayment: 0});
+  private _vendorUsage$ = new BehaviorSubject<VendorUsage>({ totalVendorInvoice: 0, totalVendorPayment: 0, totalBillClearedVendorInvoice: 0});
 
   private _listState: ListState = {
     id: 0,
     page: 1,
-    limit: 10,
+    limit: 15,
     searchList: '',
     fromDate: this.dateRangeService.monthFirstDate,
     toDate: this.dateRangeService.monthLastDate,

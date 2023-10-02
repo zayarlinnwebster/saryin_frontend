@@ -18,6 +18,7 @@
         <th scope="col">အလုပ်သမားခ</th>
         <th scope="col">အထွေထွေခ</th>
         <th scope="col">စုစုပေါင်းတန်ဖိုး</th>
+        <th scope="col">လုပ်ဆောင်ချက်</th>
       </tr>
     </thead>
 
@@ -53,6 +54,12 @@
               <td>{{ invoiceDetail.generalFee | number }}</td>
               <td>
                 {{ invoiceDetail.totalPrice | number }}
+              </td>
+              <td>
+                <app-bill-clear
+                  (isUpdate)="vendorDetailService.searchList = ''"
+                  [invoiceDetail]="invoiceDetail"
+                ></app-bill-clear>
               </td>
             </tr>
           </ng-container>

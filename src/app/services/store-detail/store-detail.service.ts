@@ -62,7 +62,7 @@ export class StoreDetailService {
   private _listState: ListState = {
     id: 0,
     page: 1,
-    limit: 10,
+    limit: 15,
     searchList: '',
     fromDate: this.dateRangeService.monthFirstDate,
     toDate: this.dateRangeService.monthLastDate,
@@ -76,6 +76,9 @@ export class StoreDetailService {
     totalQtyOut: 0,
     totalWeightIn: 0,
     totalWeightOut: 0,
+    totalPriceIn: 0,
+    totalPriceOut: 0,
+    totalCommissionFee: 0,
   });
 
   constructor(
@@ -95,7 +98,7 @@ export class StoreDetailService {
         this._stockItemTotal$.next(result.total);
       });
 
-      this._storeItemListSearch$
+    this._storeItemListSearch$
       .pipe(
         tap(() => this._storeItemListLoading$.next(true)),
         debounceTime(200),
@@ -139,7 +142,6 @@ export class StoreDetailService {
   get storeItemListLoading() {
     return this._storeItemListLoading$.asObservable();
   }
-
 
   get id() {
     return this._listState.id;
@@ -245,15 +247,13 @@ export class StoreDetailService {
         .append('direction', this._listState.sortDirection),
     };
 
-    return this.http
-      .get<any>(`api/v1/store/${this.id}/item`, options)
-      .pipe(
-        catchError(this.handleError),
-        shareReplay(1),
-        map((res) => {
-          return { storeItems: res?.data };
-        })
-      );
+    return this.http.get<any>(`api/v1/store/${this.id}/item`, options).pipe(
+      catchError(this.handleError),
+      shareReplay(1),
+      map((res) => {
+        return { storeItems: res?.data };
+      })
+    );
   }
 
   private _usageSearch(): Observable<StoreUsage> {

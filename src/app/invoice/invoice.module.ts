@@ -7,8 +7,9 @@ import { InvoiceComponent } from './invoice/invoice.component';
 import { SharedModule } from '../shared/shared.module';
 import { InvoiceDetailComponent } from './invoice/invoice-detail/invoice-detail.component';
 import { InvoicesComponent } from './invoices/invoices.component';
-import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { InvoiceDetailListComponent } from './invoices/invoice-detail-list/invoice-detail-list.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 
 @NgModule({
@@ -23,7 +24,9 @@ import { InvoiceDetailListComponent } from './invoices/invoice-detail-list/invoi
     CommonModule,
     InvoiceRoutingModule,
     SharedModule,
-    NgbNavModule
+    NgbNavModule,
+    FontAwesomeModule,
+    NgbPopoverModule
   ]
 })
 export class InvoiceModule { }

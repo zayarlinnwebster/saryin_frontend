@@ -130,7 +130,7 @@
           <th scope="col">အရေအတွက် / အလေးချိန် (သွင်း)</th>
           <th scope="col">အရေအတွက် / အလေးချိန် (ထုတ်)</th>
           <th scope="col">အရေအတွက် / အလေးချိန် (ကျန်)</th>
-          <th scope="col">စုစုပေါင်းစျေးနှုန်း</th>
+          <th scope="col">သင့်ငွေ</th>
           <th scope="col">လုပ်ဆောင်ချက်</th>
         </tr>
       </thead>
@@ -228,13 +228,13 @@
                         <th scope="col">စျေးနှုန်း</th>
                         <th scope="col">အရေအတွက် / အလေးချိန်</th>
                         <th scope="col">ပွဲခ (ရာခိုင်နှုန်း)</th>
-                        <th scope="col">စုစုပေါင်းစျေးနှုန်း</th>
+                        <th scope="col">သင့်ငွေ</th>
                         <th scope="col" colspan="100%">လုပ်ဆောင်ချက်</th>
                       </tr>
                     </thead>
                     <tbody>
                       <ng-container
-                        *ngIf="stockItem.outItems; else noStockItemOutData"
+                        *ngIf="stockItem.outItems.length > 0; else noStockItemOutData"
                       >
                         <ng-container
                           *ngFor="

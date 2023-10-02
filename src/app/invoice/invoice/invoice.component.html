@@ -1,15 +1,6 @@
 <div class="modal-header">
   <h5 class="modal-title">နယ်ပို့စာရင်းအသစ် သိမ်းဆည်းပါ။</h5>
   <div>
-    <!-- <button
-      type="button"
-      class="btn"
-      aria-label="Expand"
-      (click)="isFullscreen = !isFullscreen"
-      (click)="activeModal.update({ fullscreen: isFullscreen })"
-    >
-      <i class="bi bi-arrows-angle-expand"></i>
-    </button> -->
     <button
       type="button"
       class="btn"
@@ -99,6 +90,15 @@
             ကုန်အသစ်ထည့်မည်
           </button>
         </div>
+        <div class="mb-3">
+          <button
+            type="button"
+            class="btn btn-outline-success"
+            (click)="separateInvoice()"
+          >
+            စာရင်းခွဲမည်။
+          </button>
+        </div>
       </div>
     </div>
 
@@ -106,7 +106,36 @@
       <app-invoice-detail
         [invoiceDetails]="invoiceDetails"
         [totalItemAmount]="totalAmount"
+        (remove)="setTotalAmount()"
       ></app-invoice-detail>
+    </div>
+
+    <div class="d-flex justify-content-end">
+      <div class="card">
+        <div class="card-body">
+          <div class="mb-2">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-primary"
+              disabled
+            >
+              <fa-icon [icon]="faWarehouse"></fa-icon>
+            </button>
+            : <small> သိုလှောင်ရုံ အတွင်းထည့်သွင်းထားသည်။ </small>
+          </div>
+
+          <div class="">
+            <button
+              type="button"
+              class="btn btn-sm btn-outline-secondary"
+              disabled
+            >
+              <fa-icon [icon]="faWarehouse"></fa-icon>
+            </button>
+            : <small> သိုလှောင်ရုံ အတွင်းမထည့်သွင်းထားပါ။ </small>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 

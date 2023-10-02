@@ -95,7 +95,7 @@
     <div class="col-md-6">
       <div class="row">
         <div class="col-6 mb-3">
-          ဖုန်းနံပါတ် <span class="float-end">:</span>
+          ဖုန်းနံပါတ် <span class="float-end">|</span>
         </div>
         <div class="col-6 mb-3">
           <b>{{ store.phoneNo || "-" }}</b>
@@ -103,7 +103,7 @@
       </div>
 
       <div class="row">
-        <div class="col-6 mb-3">လိပ်စာ <span class="float-end">:</span></div>
+        <div class="col-6 mb-3">လိပ်စာ <span class="float-end">|</span></div>
         <div class="col-6 mb-3">
           <b>{{ store.address || "-" }}</b>
         </div>
@@ -112,7 +112,7 @@
       <ng-container *ngIf="storeUsage$ | async as storeUsage">
         <div class="row">
           <div class="col-6 mb-3">
-            အရေအတွက် / အလေးချိန် (သွင်း) <span class="float-end">:</span>
+            အရေအတွက် / အလေးချိန် (သွင်း) <span class="float-end">|</span>
           </div>
           <div class="col-6 mb-3">
             <b>
@@ -124,7 +124,7 @@
 
         <div class="row">
           <div class="col-6 mb-3">
-            အရေအတွက် / အလေးချိန် (ထုတ်) <span class="float-end">:</span>
+            အရေအတွက် / အလေးချိန် (ထုတ်) <span class="float-end">|</span>
           </div>
           <div class="col-6 mb-3">
             <b>
@@ -136,13 +136,61 @@
 
         <div class="row">
           <div class="col-6 mb-3">
-            အရေအတွက် / အလေးချိန် (ကျန်) <span class="float-end">:</span>
+            အရေအတွက် / အလေးချိန် (ကျန်) <span class="float-end">|</span>
           </div>
           <div class="col-6 mb-3">
             <b>
               {{ storeUsage.totalQtyIn - storeUsage.totalQtyOut | number }} /
               {{
                 storeUsage.totalWeightIn - storeUsage.totalWeightOut | number
+              }}
+            </b>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6 mb-3">
+            စုစုပေါင်းတန်ဖိုး (သွင်း) <span class="float-end">|</span>
+          </div>
+          <div class="col-6 mb-3">
+            <b>
+              {{ storeUsage.totalPriceIn || 0 | number }}
+            </b>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6 mb-3">
+            စုစုပေါင်းတန်ဖိုး (ထုတ်) <span class="float-end">|</span>
+          </div>
+          <div class="col-6 mb-3">
+            <b>
+              {{ storeUsage.totalPriceOut || 0 | number }}
+            </b>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6 mb-3">
+            စုစုပေါင်းပွဲခ <span class="float-end">|</span>
+          </div>
+          <div class="col-6 mb-3">
+            <b>
+              {{ storeUsage.totalCommissionFee || 0 | number }}
+            </b>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-6 mb-3">
+            စုစုပေါင်းအမြတ် <span class="float-end">|</span>
+          </div>
+          <div class="col-6 mb-3">
+            <b>
+              {{
+                storeUsage.totalPriceOut -
+                  storeUsage.totalPriceIn +
+                  storeUsage.totalCommissionFee | number
               }}
             </b>
           </div>

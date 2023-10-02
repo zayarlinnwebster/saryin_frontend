@@ -7,6 +7,7 @@ import {
   Subject,
   catchError,
   debounceTime,
+  distinctUntilChanged,
   finalize,
   map,
   shareReplay,
@@ -47,6 +48,7 @@ export class InvoiceService {
 
   private _listLoading$ = new BehaviorSubject<boolean>(false);
   private _createLoading$ = new BehaviorSubject<boolean>(false);
+  private _detailListLoading$ = new BehaviorSubject<boolean>(false);
   private _listSearch$ = new Subject<void>();
   private _invoices$ = new BehaviorSubject<Invoice[]>([]);
   private _total$ = new BehaviorSubject<number>(0);
@@ -54,7 +56,7 @@ export class InvoiceService {
 
   private _listState: ListState = {
     page: 1,
-    limit: 10,
+    limit: 15,
     searchList: '',
     fromDate: this.dateRangeService.monthFirstDate,
     toDate: this.dateRangeService.monthLastDate,
@@ -95,6 +97,10 @@ export class InvoiceService {
 
   get listLoading$() {
     return this._listLoading$.asObservable();
+  }
+
+  get detailListLoading$() {
+    return this._detailListLoading$.asObservable();
   }
 
   get createLoading$() {
@@ -181,6 +187,16 @@ export class InvoiceService {
     );
   }
 
+  getInvoice(invoiceId: number): Observable<Invoice> {
+    return this.http.get<any>(`api/v1/invoice/${invoiceId}`).pipe(
+      catchError(this.handleError),
+      shareReplay(1),
+      map((res) => {
+        return res?.data
+      }),
+    );
+  }
+
   exportInvoice() {
     const params = new HttpParams()
       .set('search', this._listState.searchList)
@@ -230,6 +246,26 @@ export class InvoiceService {
 
     return this.http
       .put<any>(`api/v1/invoice/${invoiceId}`, invoice, httpOptions)
+      .pipe(
+        catchError(this.handleError),
+        finalize(() => {
+          this._listSearch$.next();
+          this._createLoading$.next(false);
+        })
+      );
+  }
+
+  separateInvoice(invoiceId: number, invoice: Invoice): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    this._createLoading$.next(true);
+
+    return this.http
+      .put<any>(`api/v1/invoice/${invoiceId}/separate`, invoice, httpOptions)
       .pipe(
         catchError(this.handleError),
         finalize(() => {
