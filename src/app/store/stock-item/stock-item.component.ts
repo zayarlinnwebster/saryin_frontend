@@ -60,6 +60,7 @@ export class StockItemComponent implements OnDestroy{
       unitPrice: [0, [Validators.required, Validators.min(0)]],
       qty: ['', [Validators.required, Validators.min(1)]],
       weight: ['', [Validators.required,  Validators.min(1)]],
+      marLaKar: [null],
       itemId: [null, Validators.required],
       customerId: [null, Validators.required],
       storeId: [null, Validators.required],

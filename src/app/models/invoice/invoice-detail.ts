@@ -8,6 +8,7 @@ export interface InvoiceDetail {
   qty: number;
   weight: string;
   unitPrice: number;
+  marLaKar: string;
   itemId: number;
   item?: Item;
   vendorId: number;

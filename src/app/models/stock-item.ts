@@ -11,6 +11,7 @@ export interface StockItem {
     unitPrice: number;
     totalWeightOut: number;
     totalQtyOut: number;
+    marLaKar: string;
     customerId: number,
     customer?: Customer,
     itemId: number,

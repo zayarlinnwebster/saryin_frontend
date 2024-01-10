@@ -12,6 +12,9 @@
         <th scope="col" sortable="item.itemName" (sort)="onSort($event)">
           ငါးအမည်
         </th>
+        <th scope="col" sortable="marLaKar" (sort)="onSort($event)">
+          မာလကာ
+        </th>
         <th scope="col">စျေးနှုန်း</th>
         <th scope="col">အရေအတွက် / အလေးချိန် (သွင်း)</th>
         <th scope="col">အရေအတွက် / အလေးချိန် (ထုတ်)</th>
@@ -39,6 +42,7 @@
                 >
               </td>
               <td>{{ stockItem.item?.itemName }}</td>
+              <td>{{ stockItem.marLaKar }}</td>
               <td>{{ stockItem.unitPrice | number }}</td>
               <td>
                 {{ stockItem.qty | number }} /

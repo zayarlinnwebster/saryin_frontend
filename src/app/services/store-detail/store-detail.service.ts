@@ -79,6 +79,7 @@ export class StoreDetailService {
     totalPriceIn: 0,
     totalPriceOut: 0,
     totalCommissionFee: 0,
+    totalItemCount: 0
   });
 
   constructor(

@@ -124,6 +124,17 @@
     </div>
 
     <div class="mb-3">
+      <label for="marLaKar" class="form-label">မာလကာ</label>
+      <input
+        type="text"
+        class="form-control"
+        id="marLaKar"
+        formControlName="marLaKar"
+        placeholder="မာလကာထည့်သွင်းပါ။"
+      />
+    </div>
+
+    <div class="mb-3">
       <label for="unitPrice" class="form-label">စျေးနှုန်း</label>
       <input
         class="form-control"
@@ -135,7 +146,11 @@
           'is-invalid': unitPrice.invalid && unitPrice.touched
         }"
       />
-      <div *ngIf="unitPrice.invalid && unitPrice.touched" id="unitPrice" class="invalid-feedback">
+      <div
+        *ngIf="unitPrice.invalid && unitPrice.touched"
+        id="unitPrice"
+        class="invalid-feedback"
+      >
         <small *ngIf="unitPrice.hasError('required')">
           စျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
         </small>
@@ -202,11 +217,14 @@
           'is-invalid': totalPrice.invalid && totalPrice.touched
         }"
       />
-      <div *ngIf="totalPrice.invalid && totalPrice.touched" id="totalPrice" class="invalid-feedback">
+      <div
+        *ngIf="totalPrice.invalid && totalPrice.touched"
+        id="totalPrice"
+        class="invalid-feedback"
+      >
         <small *ngIf="totalPrice.hasError('required')">
           စုစုပေါင်းစျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
         </small>
-
       </div>
     </div>
   </div>

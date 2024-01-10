@@ -1,4 +1,3 @@
-
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
@@ -63,7 +62,12 @@ export class VendorDetailService {
   private _paymentTotal$ = new BehaviorSubject<number>(0);
 
   private _vendorUsageSearch$ = new Subject<void>();
-  private _vendorUsage$ = new BehaviorSubject<VendorUsage>({ totalVendorInvoice: 0, totalVendorPayment: 0, totalBillClearedVendorInvoice: 0});
+  private _vendorUsage$ = new BehaviorSubject<VendorUsage>({
+    totalVendorInvoice: 0,
+    totalVendorPayment: 0,
+    totalBillClearedVendorInvoice: 0,
+    totalItemCount: 0,
+  });
 
   private _listState: ListState = {
     id: 0,
@@ -247,15 +251,13 @@ export class VendorDetailService {
         .append('direction', this._listState.sortDirection),
     };
 
-    return this.http
-      .get<any>(`api/v1/vendor/${this.id}/payment`, options)
-      .pipe(
-        catchError(this.handleError),
-        shareReplay(1),
-        map((res) => {
-          return { vendorPayments: res?.data, total: res?.totalCounts };
-        })
-      );
+    return this.http.get<any>(`api/v1/vendor/${this.id}/payment`, options).pipe(
+      catchError(this.handleError),
+      shareReplay(1),
+      map((res) => {
+        return { vendorPayments: res?.data, total: res?.totalCounts };
+      })
+    );
   }
 
   private _usageSearch(): Observable<VendorUsage> {
@@ -272,10 +274,7 @@ export class VendorDetailService {
 
     return this.http
       .get<any>(`api/v1/vendor/${this.id}/usage`, options)
-      .pipe(
-        catchError(this.handleError),
-        shareReplay(1),
-      );
+      .pipe(catchError(this.handleError), shareReplay(1));
   }
 
   exportVendorDetail() {
@@ -283,7 +282,7 @@ export class VendorDetailService {
       .set('search', this._listState.searchList)
       .append('fromDate', this.formatter.format(this._listState.fromDate))
       .append('toDate', this.formatter.format(this._listState.toDate));
-      
+
     return this.http
       .get(`api/v1/vendor/${this.id}/usage/export`, {
         params: params,

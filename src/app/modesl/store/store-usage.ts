@@ -6,4 +6,5 @@ export interface StoreUsage {
     totalPriceIn: number;
     totalPriceOut: number;
     totalCommissionFee: number;
+    totalItemCount: number;
 }

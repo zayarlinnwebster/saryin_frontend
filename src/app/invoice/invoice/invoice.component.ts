@@ -211,6 +211,7 @@ export class InvoiceComponent implements OnInit, OnDestroy {
       qty: [1, [Validators.required, Validators.min(0)]],
       unitPrice: [0, [Validators.required, Validators.min(0)]],
       weight: [0, [Validators.required, Validators.min(0)]],
+      marLaKar: [null],
       laborFee: [0, [Validators.required, Validators.min(0)]],
       generalFee: [0, [Validators.required, Validators.min(0)]],
       totalPrice: [0, Validators.required],
@@ -237,6 +238,7 @@ export class InvoiceComponent implements OnInit, OnDestroy {
         [Validators.required, Validators.min(0)],
       ],
       weight: [invoiceDetail.weight, [Validators.required, Validators.min(0)]],
+      marLaKar: [invoiceDetail.marLaKar],
       laborFee: [
         invoiceDetail.laborFee,
         [Validators.required, Validators.min(0)],
