@@ -10,6 +10,7 @@ import { InvoicesComponent } from './invoices/invoices.component';
 import { NgbNavModule, NgbPopoverModule } from '@ng-bootstrap/ng-bootstrap';
 import { InvoiceDetailListComponent } from './invoices/invoice-detail-list/invoice-detail-list.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { InvoiceDetailEditComponent } from './invoice-detail-edit/invoice-detail-edit.component';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     InvoiceComponent,
     InvoiceDetailComponent,
     InvoicesComponent,
-    InvoiceDetailListComponent
+    InvoiceDetailListComponent,
+    InvoiceDetailEditComponent
   ],
   imports: [
     CommonModule,

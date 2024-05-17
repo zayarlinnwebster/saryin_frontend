@@ -11,6 +11,7 @@ import {
   map,
   shareReplay,
   switchMap,
+  takeUntil,
   tap,
   throwError,
 } from 'rxjs';
@@ -22,6 +23,7 @@ import { DateRangeService } from '../date-range/date-range.service';
 import { environment } from 'src/environments/environment';
 import { InvoiceDetail } from 'src/app/models/invoice/invoice-detail';
 import { downloadFile } from 'src/app/core/utils/download-file';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 interface SearchResult {
   invoiceDetails: InvoiceDetail[];
@@ -45,6 +47,7 @@ interface ListState {
 export class InvoiceDetailService {
   private apiUrl = environment.apiUrl;
 
+  private _createLoading$ = new BehaviorSubject<boolean>(false);
   private _listLoading$ = new BehaviorSubject<boolean>(false);
   private _listSearch$ = new Subject<void>();
   private _invoiceDetails$ = new BehaviorSubject<InvoiceDetail[]>([]);
@@ -94,6 +97,10 @@ export class InvoiceDetailService {
 
   get listLoading$() {
     return this._listLoading$.asObservable();
+  }
+
+  get createLoading$() {
+    return this._createLoading$.asObservable();
   }
 
   get page() {
@@ -224,19 +231,83 @@ export class InvoiceDetailService {
     return throwError(() => error);
   }
 
-  updateBillClear(invoiceDetailId: number, isBillCleared: boolean): Observable<any> {
+  updateBillClear(
+    invoiceDetailId: number,
+    isBillCleared: boolean
+  ): Observable<any> {
     const httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',
       }),
     };
 
-    return this.http.patch<any>(`api/v1/invoice/detail/${invoiceDetailId}/bill-clear`, { isBillCleared }, httpOptions).pipe(
-      catchError(this.handleError),
-      finalize(() => {
-        this._listSearch$.next();
-      })
+    return this.http
+      .patch<any>(
+        `api/v1/invoice/detail/${invoiceDetailId}/bill-clear`,
+        { isBillCleared },
+        httpOptions
+      )
+      .pipe(
+        catchError(this.handleError),
+        finalize(() => {
+          this._listSearch$.next();
+        })
+      );
+  }
+
+  getTotalPrice(
+    unitPrice: number = 0,
+    weight: number = 0,
+    laborFee: number = 0,
+    generalFee: number = 0
+  ): number {
+    const totalPrice = Math.round(
+      Number(weight) * Number(unitPrice) + Number(laborFee) + Number(generalFee)
     );
+
+    return totalPrice;
+  }
+
+  setupStoreItemValidation(
+    isStoreItem: FormControl,
+    storeId: FormControl,
+    storedDate: FormControl,
+    destroy: Subject<void>
+  ) {
+    isStoreItem.valueChanges
+      .pipe(takeUntil(destroy))
+      .subscribe((isStoreItemValue) => {
+        if (isStoreItemValue) {
+          storeId.setValidators(Validators.required);
+          storedDate.setValidators(Validators.required);
+        } else {
+          storeId.clearValidators();
+          storedDate.clearValidators();
+        }
+
+        storeId.updateValueAndValidity();
+        storedDate.updateValueAndValidity();
+      });
+  }
+
+  updateInvoiceDetail(invoiceDetailId: number, invoiceDetail: InvoiceDetail): Observable<any> {
+    const httpOptions = {
+      headers: new HttpHeaders({
+        'Content-Type': 'application/json',
+      }),
+    };
+
+    this._createLoading$.next(true);
+
+    return this.http
+      .put<any>(`api/v1/invoice/detail/${invoiceDetailId}`, invoiceDetail, httpOptions)
+      .pipe(
+        catchError(this.handleError),
+        finalize(() => {
+          this._listSearch$.next();
+          this._createLoading$.next(false);
+        })
+      );
   }
 
 }

@@ -1,21 +1,28 @@
-import { Component, EventEmitter, Output, QueryList, ViewChildren } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Output,
+  QueryList,
+  ViewChildren,
+} from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { EMPTY, Observable, switchMap, takeUntil, tap } from 'rxjs';
-import { SortEvent, SortableDirective } from 'src/app/directives/sortable/sortable.directive';
-import { InvoiceComponent } from 'src/app/invoice/invoice/invoice.component';
-import { Invoice } from 'src/app/models/invoice/invoice';
+import { Observable, take } from 'rxjs';
+import {
+  SortEvent,
+  SortableDirective,
+} from 'src/app/directives/sortable/sortable.directive';
+import { InvoiceDetailEditComponent } from 'src/app/invoice/invoice-detail-edit/invoice-detail-edit.component';
 import { InvoiceDetail } from 'src/app/models/invoice/invoice-detail';
 import { AlertModalService } from 'src/app/services/alert-modal/alert-modal.service';
 import { CustomerDetailService } from 'src/app/services/customer-detail/customer-detail.service';
 import { DateRangeService } from 'src/app/services/date-range/date-range.service';
-import { InvoiceService } from 'src/app/services/invoice/invoice.service';
 import { AlertModalConfig } from 'src/app/shared/alert-modal/alert-modal.config';
 import { LIMIT_OPTIONS } from 'src/app/shared/constants';
 
 @Component({
   selector: 'app-customer-invoice',
   templateUrl: './customer-invoice.component.html',
-  styleUrls: ['./customer-invoice.component.css']
+  styleUrls: ['./customer-invoice.component.css'],
 })
 export class CustomerInvoiceComponent {
   limitOptions: object[] = LIMIT_OPTIONS;
@@ -25,7 +32,7 @@ export class CustomerInvoiceComponent {
 
   alertModalConfig: AlertModalConfig = {
     modalTitle: 'နယ်ပို့စာရင်းပြင်ဆင်ခြင်း။',
-    hideFooter: false,
+    hideFooter: true,
     dismissButtonLabel: 'လုပ်မည်။',
     closeButtonLabel: 'မလုပ်ပါ။',
   };
@@ -37,14 +44,25 @@ export class CustomerInvoiceComponent {
     public customerDetailService: CustomerDetailService,
     public dateRangeService: DateRangeService,
     private _modalService: NgbModal,
-    private _alertModalService: AlertModalService,
-    private _invoiceService: InvoiceService,
+    private _alertModalService: AlertModalService
   ) {
-    this.invoiceDetails$ = customerDetailService.customerInvoiceDetails
+    this.invoiceDetails$ = customerDetailService.customerInvoiceDetails;
     this.total$ = customerDetailService.invoiceTotal;
     customerDetailService.searchList = '';
 
     this._alertModalService.setAlertModalConfig(this.alertModalConfig);
+  }
+
+  openEditInvoiceDetail(invoiceDetail: InvoiceDetail) {
+    const modalRef = this._modalService.open(InvoiceDetailEditComponent, {
+      backdrop: 'static',
+      animation: true,
+    });
+    modalRef.componentInstance.editInvoiceDetail = invoiceDetail;
+
+    modalRef.componentInstance.isSuccess
+      .pipe(take(1))
+      .subscribe(() => (this.customerDetailService.searchList = ''));
   }
 
   toggleDetails(index: number): void {

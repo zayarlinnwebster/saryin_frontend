@@ -119,7 +119,9 @@
     </div>
     <div class="mb-3 d-flex justify-content-between">
       <b class="me-1">ရှင်းပြီးငွေစုစုပေါင်းတန်ဖိုး : </b>
-      <strong>{{ totalAmount.totalBillClearedInvoiceDetailAmount | number }}</strong>
+      <strong>{{
+        totalAmount.totalBillClearedInvoiceDetailAmount | number
+      }}</strong>
     </div>
   </div>
 </div>
@@ -168,7 +170,7 @@
                 <a
                   class="link-dark link-underline link-underline-opacity-0"
                   [routerLink]="['/vendor', invoiceDetail.vendor?.id]"
-                  [fragment]="'သွင်းငွေ'"
+                  [fragment]="'နယ်ပို့'"
                   >{{ invoiceDetail.vendor?.vendorName }}</a
                 >
               </td>
@@ -179,7 +181,7 @@
                     '/customer',
                     invoiceDetail.invoice.customer?.id
                   ]"
-                  [fragment]="'လွှဲငွေ'"
+                  [fragment]="'နယ်ပို့'"
                   >{{ invoiceDetail.invoice.customer?.fullName }}</a
                 >
               </td>
@@ -195,6 +197,13 @@
                 {{ invoiceDetail.totalPrice | number }}
               </td>
               <td>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm me-1"
+                  (click)="openEditInvoiceDetail(invoiceDetail)"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </button>
                 <app-bill-clear
                   (isUpdate)="invoiceDetailService.searchList = ''"
                   [invoiceDetail]="invoiceDetail"

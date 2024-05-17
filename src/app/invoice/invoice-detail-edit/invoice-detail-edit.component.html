@@ -1,0 +1,258 @@
+<form [formGroup]="invoiceDetailForm" (submit)="onSubmit()">
+    <div class="modal-body">
+        <div class="mb-3">
+            <label for="vendorId" class="form-label">ပွဲရုံအမည်</label>
+            <ng-select id="vendorId" [loading]="(vendorService.dropdownLoading$ | async) ?? false"
+                [items]="dropdownVendors$ | async" [bindLabel]="'vendorName'" [bindValue]="'id'"
+                placeholder="ကုန်သည်အမည်ကို ရွေးပါ။" [typeahead]="vendorService.dropdownSearch$"
+                formControlName="vendorId" [ngClass]="{
+          'is-invalid':
+            invoiceDetailForm.get('vendorId')?.invalid &&
+            invoiceDetailForm.get('vendorId')?.touched
+        }" autofocus>
+            </ng-select>
+            <div *ngIf="
+          invoiceDetailForm.get('vendorId')?.invalid &&
+          invoiceDetailForm.get('vendorId')?.touched
+        " id="vendorId" class="invalid-feedback">
+                <small *ngIf="invoiceDetailForm.get('vendorId')?.hasError('required')">
+                    ပွဲရုံအမည်ရွေးရန်လိုအပ်ပါတယ်။
+                </small>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="itemId" class="form-label">ငါးအမည်</label>
+            <ng-select id="itemId" [loading]="(itemService.dropdownLoading$ | async) ?? false"
+                [items]="dropdownItems$ | async" [bindLabel]="'itemName'" [bindValue]="'id'"
+                placeholder="ငါးအမည်ကို ရွေးပါ။" [typeahead]="itemService.dropdownSearch$" formControlName="itemId"
+                [ngClass]="{
+          'is-invalid':
+            invoiceDetailForm.get('itemId')?.invalid &&
+            invoiceDetailForm.get('itemId')?.touched
+        }">
+            </ng-select>
+            <div *ngIf="
+          invoiceDetailForm.get('itemId')?.touched &&
+          invoiceDetailForm.get('itemId')?.invalid
+        " id="itemId" class="invalid-feedback">
+                <small *ngIf="invoiceDetailForm.get('itemId')?.hasError('required')">
+                    ငါးအမည်ထည်းသွင်းရန်လိုအပ်ပါသည်။
+                </small>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="qty" class="form-label">အရေအတွက်</label>
+            <input type="number" class="form-control" id="qty" formControlName="qty" placeholder="အရေအတွက်ထည့်သွင်းပါ။"
+                [ngClass]="{
+          'is-invalid':
+            invoiceDetailForm.get('qty')?.invalid &&
+            invoiceDetailForm.get('qty')?.touched
+        }" />
+            <div *ngIf="
+          invoiceDetailForm.get('qty')?.touched &&
+          invoiceDetailForm.get('qty')?.invalid
+        " id="qty" class="invalid-feedback">
+                <small *ngIf="invoiceDetailForm.get('qty')?.hasError('required')">
+                    အရေအတွက်ထည့်သွင်းရန်လိုအပ်ပါသည်။
+                </small>
+                <small *ngIf="invoiceDetailForm.get('qty')?.hasError('min')">
+                    အရေအတွက်သည် 1 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+                </small>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="weight" class="form-label">အလေးချိန်</label>
+            <input type="number" class="form-control" id="weight" formControlName="weight"
+                placeholder="အလေးချိန်ထည့်သွင်းပါ။" [ngClass]="{
+          'is-invalid':
+            invoiceDetailForm.get('weight')?.invalid &&
+            invoiceDetailForm.get('weight')?.touched
+        }" />
+            <div *ngIf="
+          invoiceDetailForm.get('weight')?.touched &&
+          invoiceDetailForm.get('weight')?.invalid
+        " id="weight" class="invalid-feedback">
+                <small *ngIf="invoiceDetailForm.get('weight')?.hasError('required')">
+                    အလေးချိန်ထည့်သွင်းရန်လိုအပ်ပါသည်။
+                </small>
+                <small *ngIf="invoiceDetailForm.get('weight')?.hasError('min')">
+                    အလေးချိန်သည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+                </small>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="weight" class="form-label">စျေးနှုန်း</label>
+            <input type="number" class="form-control" id="unitPrice" formControlName="unitPrice"
+                placeholder="စျေးနှုန်းထည့်သွင်းပါ။" [ngClass]="{
+          'is-invalid':
+            invoiceDetailForm.get('unitPrice')?.invalid &&
+            invoiceDetailForm.get('unitPrice')?.touched
+        }" />
+            <div *ngIf="
+          invoiceDetailForm.get('unitPrice')?.touched &&
+          invoiceDetailForm.get('unitPrice')?.invalid
+        " id="unitPrice" class="invalid-feedback">
+                <small *ngIf="invoiceDetailForm.get('unitPrice')?.hasError('required')">
+                    စျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
+                </small>
+                <small *ngIf="invoiceDetailForm.get('unitPrice')?.hasError('min')">
+                    စျေးနှုန်းသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+                </small>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="laborFee" class="form-label">အလုပ်သမား အခကြေးငွေ</label>
+            <input class="form-control" type="number" id="laborFee" formControlName="laborFee"
+                placeholder="အလုပ်သမား အခကြေးငွေထည့်သွင်းပါ။" [ngClass]="{
+          'is-invalid':
+            invoiceDetailForm.get('laborFee')?.invalid &&
+            invoiceDetailForm.get('laborFee')?.touched
+        }" />
+            <div *ngIf="
+          invoiceDetailForm.get('laborFee')?.invalid &&
+          invoiceDetailForm.get('laborFee')?.touched
+        " id="laborFee" class="invalid-feedback">
+                <small *ngIf="invoiceDetailForm.get('laborFee')?.hasError('required')">
+                    အလုပ်သမား အခကြေးငွေထည်းသွင်းရန်လိုအပ်ပါသည်။
+                </small>
+                <small *ngIf="invoiceDetailForm.get('laborFee')?.hasError('min')">
+                    အလုပ်သမား အခကြေးငွေသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+                </small>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="generalFee" class="form-label">အထွေထွေ အခကြေးငွေ</label>
+            <input class="form-control" type="number" id="generalFee" formControlName="generalFee"
+                placeholder="အထွေထွေ အခကြေးငွေထည့်သွင်းပါ။" [ngClass]="{
+          'is-invalid':
+            invoiceDetailForm.get('generalFee')?.invalid &&
+            invoiceDetailForm.get('generalFee')?.touched
+        }" />
+            <div *ngIf="
+          invoiceDetailForm.get('generalFee')?.invalid &&
+          invoiceDetailForm.get('generalFee')?.touched
+        " id="generalFee" class="invalid-feedback">
+                <small *ngIf="invoiceDetailForm.get('generalFee')?.hasError('required')">
+                    အထွေထွေ အခကြေးငွေထည်းသွင်းရန်လိုအပ်ပါသည်။
+                </small>
+                <small *ngIf="invoiceDetailForm.get('generalFee')?.hasError('min')">
+                    အထွေထွေ အခကြေးငွေသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+                </small>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="totalPrice" class="form-label">စုစုပေါင်းစျေးနှုန်း</label>
+            <input type="number" class="form-control" id="totalPrice" formControlName="totalPrice" [ngClass]="{
+          'is-invalid':
+            invoiceDetailForm.get('totalPrice')?.invalid &&
+            invoiceDetailForm.get('totalPrice')?.touched
+        }" />
+            <div *ngIf="
+          invoiceDetailForm.get('totalPrice')?.touched &&
+          invoiceDetailForm.get('totalPrice')?.invalid
+        " id="totalPrice" class="invalid-feedback">
+                <small *ngIf="invoiceDetailForm.get('totalPrice')?.hasError('required')">
+                    စုစုပေါင်းစျေးနှုန်းထည်းသွင်းရန်လိုအပ်ပါသည်။
+                </small>
+                <small *ngIf="invoiceDetailForm.get('totalPrice')?.hasError('min')">
+                    စုစုပေါင်းစျေးနှုန်းသည် 0 ထက် ကြီးသည် သို့မဟုတ် ညီရမည်။
+                </small>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="remark" class="form-label">မှတ်ချက်</label>
+            <input type="text" class="form-control" id="remark" formControlName="remark" />
+        </div>
+
+        <div class="mb-3">
+            <ng-template #popTitle>သိုလှောင်ရုံ ရွေးပါ</ng-template>
+            <ng-template #popContent>
+                <div class="form-check mb-3">
+                    <input class="form-check-input" type="checkbox" formControlName="isStoreItem" id="isStoreItem" />
+                    <label class="form-check-label" for="isStoreItem">
+                        ကုန်လှောင်မည်။
+                    </label>
+                </div>
+                <div class="mb-3">
+                    <ng-select id="storeId" [loading]="(storeService.dropdownLoading$ | async) ?? false"
+                        [items]="dropdownStore$ | async" [bindLabel]="'storeName'" [bindValue]="'id'"
+                        placeholder="သိုလှောင်ရုံအမည် ရွေးပါ။" [typeahead]="storeService.dropdownSearch$"
+                        formControlName="storeId" [ngClass]="{
+              'is-invalid':
+                invoiceDetailForm.get('storeId')?.invalid &&
+                invoiceDetailForm.get('storeId')?.touched
+            }">
+                    </ng-select>
+                    <div *ngIf="
+              invoiceDetailForm.get('storeId')?.invalid &&
+              invoiceDetailForm.get('storeId')?.touched
+            " id="storeId" class="invalid-feedback">
+                        <small *ngIf="invoiceDetailForm.get('storeId')?.hasError('required')">
+                            သိုလှောင်ရုံအမည်ရွေးရန်လိုအပ်ပါတယ်။
+                        </small>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="marLaKar" class="form-label">မာလကာ</label>
+                    <input type="text" class="form-control" id="marLaKar" formControlName="marLaKar"
+                        placeholder="မာလကာထည့်သွင်းပါ။" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="storedDate" class="form-label">ရက်စွဲ (သွင်း)</label>
+                    <div class="input-group">
+                        <input class="form-control" placeholder="yyyy-mm-dd" name="storedDate" ngbDatepicker
+                            #d="ngbDatepicker" formControlName="storedDate" [ngClass]="{
+                'is-invalid':
+                  invoiceDetailForm.get('storedDate')?.invalid &&
+                  invoiceDetailForm.get('storedDate')?.touched
+              }" />
+                        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="d.toggle()"
+                            type="button"></button>
+
+                        <div *ngIf="
+                invoiceDetailForm.get('storedDate')?.invalid &&
+                invoiceDetailForm.get('storedDate')?.touched
+              " id="storedDate" class="invalid-feedback">
+                            <small *ngIf="
+                  invoiceDetailForm.get('storedDate')?.hasError('required')
+                ">
+                                ရက်စွဲဖြည့်ရန်လိုအပ်ပါတယ်။
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+            <button type="button" class="btn btn-sm me-1" [ngClass]="
+          invoiceDetailForm.get('isStoreItem')?.value
+            ? 'btn-outline-primary'
+            : 'btn-outline-secondary'
+        " [ngbPopover]="popContent" [popoverTitle]="popTitle" [autoClose]="'outside'" placement="start">
+                <fa-icon [icon]="faWarehouse"></fa-icon>
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss('Cross click')">
+            ပိတ်မည်။
+        </button>
+        <button *ngIf="!(invoiceDetailService.createLoading$ | async)" type="submit" class="btn btn-outline-primary"
+            [disabled]="invoiceDetailForm.invalid">
+            သိမ်းဆည်းမည်။
+        </button>
+        <button *ngIf="invoiceDetailService.createLoading$ | async" class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            လုပ်ဆောင်နေသည်
+        </button>
+    </div>
+</form>

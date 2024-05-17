@@ -9,11 +9,16 @@
         <th scope="col" sortable="vendor.vendorName" (sort)="onSort($event)">
           ပွဲရုံအမည်
         </th>
-        <th scope="col" sortable="item.itemName" (sort)="onSort($event)">ငါးအမည်</th>
+        <th scope="col" sortable="item.itemName" (sort)="onSort($event)">
+          ငါးအမည်
+        </th>
         <th>အရေအတွက်</th>
-        <th>စျေးနှုန်း</th>
         <th>အလေးချိန်</th>
-        <th colspan="100%">စုစုပေါင်းတန်ဖိုး</th>
+        <th>စျေးနှုန်း</th>
+        <th scope="col">အလုပ်သမားခ</th>
+        <th scope="col">အထွေထွေခ</th>
+        <th>စုစုပေါင်းတန်ဖိုး</th>
+        <th colspan="100%">လုပ်ဆောင်ချက်</th>
       </tr>
     </thead>
 
@@ -34,16 +39,31 @@
                 <a
                   class="link-dark link-underline link-underline-opacity-0"
                   [routerLink]="['/vendor', invoiceDetail.vendor?.id]"
-                  [fragment]="'သွင်းငွေ'"
+                  [fragment]="'နယ်ပို့'"
                   >{{ invoiceDetail.vendor?.vendorName }}</a
                 >
               </td>
               <td>{{ invoiceDetail.item?.itemName }}</td>
               <td>{{ invoiceDetail.qty | number }}</td>
-              <td>{{ invoiceDetail.unitPrice | number }}</td>
               <td>{{ invoiceDetail.weight }}</td>
+              <td>{{ invoiceDetail.unitPrice | number }}</td>
+              <td>{{ invoiceDetail.laborFee | number }}</td>
+              <td>{{ invoiceDetail.generalFee | number }}</td>
               <td colspan="100%">
                 {{ invoiceDetail.totalPrice | number }}
+              </td>
+              <td>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm me-1"
+                  (click)="openEditInvoiceDetail(invoiceDetail)"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <app-bill-clear
+                  (isUpdate)="customerDetailService.searchList = ''"
+                  [invoiceDetail]="invoiceDetail"
+                ></app-bill-clear>
               </td>
             </tr>
           </ng-container>

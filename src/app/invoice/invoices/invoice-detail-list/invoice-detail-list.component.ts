@@ -1,6 +1,6 @@
 import { Component, QueryList, ViewChildren } from '@angular/core';
 import { NgbModal, NgbPopover } from '@ng-bootstrap/ng-bootstrap';
-import { Observable } from 'rxjs';
+import { Observable, take } from 'rxjs';
 import {
   SortEvent,
   SortableDirective,
@@ -11,7 +11,7 @@ import { LIMIT_OPTIONS } from 'src/app/shared/constants';
 import { InvoiceDetail } from 'src/app/models/invoice/invoice-detail';
 import { InvoiceDetailService } from 'src/app/services/invoice-detail/invoice-detail.service';
 import { faDollarSign } from '@fortawesome/free-solid-svg-icons';
-import { AlertModalService } from 'src/app/services/alert-modal/alert-modal.service';
+import { InvoiceDetailEditComponent } from '../../invoice-detail-edit/invoice-detail-edit.component';
 
 @Component({
   selector: 'app-invoice-detail-list',
@@ -62,5 +62,17 @@ export class InvoiceDetailListComponent {
       fullscreen: true,
       animation: true,
     });
+  }
+
+  openEditInvoiceDetail(invoiceDetail: InvoiceDetail) {
+    const modalRef = this._modalService.open(InvoiceDetailEditComponent, {
+      backdrop: 'static',
+      animation: true,
+    });
+    modalRef.componentInstance.editInvoiceDetail = invoiceDetail;
+
+    modalRef.componentInstance.isSuccess
+      .pipe(take(1))
+      .subscribe(() => (this.invoiceDetailService.searchList = ''));
   }
 }

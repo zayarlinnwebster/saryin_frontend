@@ -1,7 +1,7 @@
 import { VendorDetailService } from 'src/app/services/vendor-detail/vendor-detail.service';
 import { Component, QueryList, ViewChildren } from '@angular/core';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { EMPTY, Observable, switchMap, takeUntil } from 'rxjs';
+import { EMPTY, Observable, switchMap, take, takeUntil } from 'rxjs';
 import { DateRangeService } from 'src/app/services/date-range/date-range.service';
 import { LIMIT_OPTIONS } from 'src/app/shared/constants';
 import { Invoice } from 'src/app/models/invoice/invoice';
@@ -15,6 +15,7 @@ import { InvoiceComponent } from 'src/app/invoice/invoice/invoice.component';
 import { InvoiceService } from 'src/app/services/invoice/invoice.service';
 import { InvoiceDetail } from 'src/app/models/invoice/invoice-detail';
 import { InvoiceDetailService } from 'src/app/services/invoice-detail/invoice-detail.service';
+import { InvoiceDetailEditComponent } from 'src/app/invoice/invoice-detail-edit/invoice-detail-edit.component';
 
 @Component({
   selector: 'app-vendor-invoice',
@@ -68,49 +69,16 @@ export class VendorInvoiceComponent {
     this.vendorDetailService.sortDirection = direction;
   }
 
-  openEditInvoice(invoice: Invoice) {
-    const modalRef = this._modalService.open(InvoiceComponent, {
-      size: 'xl',
+  openEditInvoiceDetail(invoiceDetail: InvoiceDetail) {
+    const modalRef = this._modalService.open(InvoiceDetailEditComponent, {
       backdrop: 'static',
-      centered: true,
-      fullscreen: 'lg',
       animation: true,
     });
-    modalRef.componentInstance.editInvoice = invoice;
+    modalRef.componentInstance.editInvoiceDetail = invoiceDetail;
+
+    modalRef.componentInstance.isSuccess
+      .pipe(take(1))
+      .subscribe(() => (this.vendorDetailService.searchList = ''));
   }
 
-  deleteInvoice(invoiceId: number) {
-    this.alertModalConfig.hideFooter = false;
-    this._alertModalService.setAlertModalConfig(this.alertModalConfig);
-
-    this._alertModalService.open(
-      'ဤနယ်ပို့စာရင်းကို ဖျက်မှာသေချာပါသလား?',
-      'warning'
-    );
-    this._alertModalService.onDismiss
-      .pipe(
-        takeUntil(this._alertModalService.onClose),
-        switchMap((action) => {
-          if (action === 'dismiss') {
-            this.alertModalConfig.hideFooter = true;
-            this._alertModalService.setAlertModalConfig(this.alertModalConfig);
-
-            return this._invoiceService.deleteInvoice(invoiceId);
-          } else {
-            return EMPTY;
-          }
-        })
-      )
-      .subscribe({
-        next: (res) => {
-          this._alertModalService.open(
-            'နယ်ပို့စာရင်းဖျက်သိမ်းပြီးပါပြီ။',
-            'success'
-          );
-        },
-        error: (err) => {
-          this._alertModalService.open(err, 'danger');
-        },
-      });
-  }
 }

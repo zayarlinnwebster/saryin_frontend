@@ -42,7 +42,7 @@
                     '/customer',
                     invoiceDetail.invoice.customer?.id
                   ]"
-                  [fragment]="'လွှဲငွေ'"
+                  [fragment]="'နယ်ပို့'"
                   >{{ invoiceDetail.invoice.customer?.fullName }}</a
                 >
               </td>
@@ -56,6 +56,13 @@
                 {{ invoiceDetail.totalPrice | number }}
               </td>
               <td>
+                <button
+                  type="button"
+                  class="btn btn-outline-secondary btn-sm me-1"
+                  (click)="openEditInvoiceDetail(invoiceDetail)"
+                >
+                  <i class="bi bi-pencil-square"></i>
+                </button>
                 <app-bill-clear
                   (isUpdate)="vendorDetailService.searchList = ''"
                   [invoiceDetail]="invoiceDetail"
