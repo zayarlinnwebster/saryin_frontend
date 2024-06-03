@@ -130,7 +130,7 @@
 
         <div class="row">
           <div class="col-6 mb-3">
-            နယ်ပို့စာရင်းငွေစုစုပေါင်း <span class="float-end">|</span>
+            စာရင်းငွေစုစုပေါင်း (နယ်ပို့) <span class="float-end">|</span>
           </div>
           <div class="col-6 mb-3">
             <b>{{ customerUsage.totalCustomerInvoice || 0 | number }}</b>
@@ -139,12 +139,22 @@
 
         <div class="row">
           <div class="col-6 mb-3">
+            စာရင်းငွေစုစုပေါင်း (လှောင်ကုန်) <span class="float-end">|</span>
+          </div>
+          <div class="col-6 mb-3">
+            <b>{{ customerUsage.totalStockInvoice || 0 | number }}</b>
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="col-6 mb-3">
             ကော်မရှင်ခ <span class="float-end">|</span>
           </div>
           <div class="col-6 mb-3">
             <b
               >{{
-                (customerUsage.totalCustomerInvoice * customer.commission) / 100
+                ((customerUsage.totalCustomerInvoice + customerUsage.totalStockInvoice) * customer.commission) / 100
                   | number:'1.0-0'
               }}
             </b>
@@ -156,10 +166,11 @@
           <div class="col-6 mb-3">
             <b
               >{{
-                customerUsage.totalCustomerInvoice -
-                  customerUsage.totalCustomerPayment +
-                  (customerUsage.totalCustomerInvoice * customer.commission) /
-                    100 | number:'1.0-0'
+                (customerUsage.totalCustomerInvoice +
+                 customerUsage.totalStockInvoice +
+                 ((customerUsage.totalCustomerInvoice + customerUsage.totalStockInvoice) * customer.commission) /
+                    100 ) -
+                  customerUsage.totalCustomerPayment | number:'1.0-0'
               }}
             </b>
           </div>
@@ -170,7 +181,7 @@
           <div class="col-6 mb-3">
             <b
               >{{
-                customerUsage.totalItemCount | number:'1.0-0'
+                customerUsage.totalItemCount || 0 | number:'1.0-0'
               }}
             </b>
           </div>

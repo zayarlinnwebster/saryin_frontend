@@ -153,7 +153,7 @@
             အရေအတွက် စုစုပေါင်း <span class="float-end">|</span>
           </div>
           <div class="col-6 mb-3">
-            <b>{{ vendorUsage.totalItemCount | number }}</b>
+            <b>{{ vendorUsage.totalItemCount || 0 | number }}</b>
           </div>
         </div>
       </ng-container>

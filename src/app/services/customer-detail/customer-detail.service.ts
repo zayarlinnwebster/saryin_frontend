@@ -49,7 +49,7 @@ export class CustomerDetailService {
   private _paymentTotal$ = new BehaviorSubject<number>(0);
 
   private _customerUsageSearch$ = new Subject<void>();
-  private _customerUsage$ = new BehaviorSubject<CustomerUsage>({ totalCustomerInvoice: 0, totalCustomerPayment: 0, totalItemCount: 0});
+  private _customerUsage$ = new BehaviorSubject<CustomerUsage>({ totalCustomerInvoice: 0, totalCustomerPayment: 0, totalItemCount: 0, totalStockInvoice: 0});
 
   private _listState: ListState = {
     id: 0,
