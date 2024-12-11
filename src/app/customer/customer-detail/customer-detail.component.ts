@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { EMPTY, Observable, Subject, map, of, switchMap, takeUntil } from 'rxjs';
 import { Customer } from 'src/app/models/customer/customer';
@@ -12,10 +12,10 @@ import { DateRangeService } from 'src/app/services/date-range/date-range.service
   templateUrl: './customer-detail.component.html',
   styleUrls: ['./customer-detail.component.css'],
 })
-export class CustomerDetailComponent {
+export class CustomerDetailComponent implements OnInit, OnDestroy {
   destroy$: Subject<boolean> = new Subject<boolean>();
   customer$: Observable<Customer>;
-  customerUsage$: Observable<CustomerUsage>;
+  customerUsage!: CustomerUsage;
 
   activeFragment$: Observable<string>;
 
@@ -26,7 +26,7 @@ export class CustomerDetailComponent {
     public customerDetailService: CustomerDetailService
   ) {
     this.dateRangeService.fromDate = customerDetailService.fromDate;
-    this.dateRangeService.toDate = customerDetailService.toDate;    
+    this.dateRangeService.toDate = customerDetailService.toDate;
 
     this.activeFragment$ = this.route.fragment.pipe(
       map(fragment => fragment ? decodeURIComponent(fragment) : '')
@@ -34,17 +34,25 @@ export class CustomerDetailComponent {
 
     this.customer$ = this.route.paramMap.pipe(
       switchMap((param: ParamMap) => {
-        const customerId = param.get('id');
-        if (!customerId) return EMPTY;
-        this.customerDetailService.id = Number(customerId);
-        return this._customerService.getCustomer(Number(param.get('id')));
+        if (!param.get('id')) return EMPTY;
+
+        const customerId = Number(param.get('id'));
+        this.customerDetailService.customerId = customerId;
+
+        return this._customerService.getCustomer(customerId);
       })
     );
 
-    this.customerUsage$ = this.customerDetailService.customerUsage;
+    this.customerDetailService.customerUsage$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((customerUsage: CustomerUsage) => {
+
+        this.customerUsage = customerUsage;
+      });
+
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

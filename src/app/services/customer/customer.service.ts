@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import {
   BehaviorSubject,
+  EMPTY,
   Observable,
   Subject,
   catchError,
@@ -31,6 +32,7 @@ interface ListState {
   searchList: string;
   sortColumn: SortColumn;
   sortDirection: SortDirection;
+  customerId: number;
 }
 
 @Injectable({
@@ -57,6 +59,7 @@ export class CustomerService {
     searchList: '',
     sortColumn: '',
     sortDirection: '',
+    customerId: 0
   };
 
   constructor(
@@ -124,6 +127,14 @@ export class CustomerService {
 
   get searchList() {
     return this._listState.searchList;
+  }
+
+  get customerId() {
+    return this._listState.customerId;
+  }
+
+  set customerId(customerId: number) {
+    this._listState.customerId = customerId;
   }
 
   set page(page: number) {
@@ -229,7 +240,7 @@ export class CustomerService {
     );
   }
 
-  getCustomer(customerId: number): Observable<any> {
+  getCustomer(customerId: number): Observable<Customer> {
     return this.http.get<any>(`api/v1/customer/${customerId}`).pipe(
       shareReplay(1),
       catchError(this.handleError),

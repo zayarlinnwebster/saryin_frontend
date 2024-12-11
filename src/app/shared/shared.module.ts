@@ -12,6 +12,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PipesModule } from '../pipes/pipes.module';
 import { LoadingCenterComponent } from './loading-center/loading-center.component';
 import { BillClearComponent } from './bill-clear/bill-clear.component';
+import { CustomerUsageDetailComponent } from './customer-usage-detail/customer-usage-detail.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { BillClearComponent } from './bill-clear/bill-clear.component';
     LoadingRowComponent,
     EmptyRowComponent,
     LoadingCenterComponent,
-    BillClearComponent
+    BillClearComponent,
+    CustomerUsageDetailComponent
   ],
   imports: [
     CommonModule,
@@ -47,7 +49,8 @@ import { BillClearComponent } from './bill-clear/bill-clear.component';
     NgbDatepickerModule,
     ReactiveFormsModule,
     FormsModule,
-    PipesModule
+    PipesModule,
+    CustomerUsageDetailComponent
   ]
 })
 export class SharedModule { }

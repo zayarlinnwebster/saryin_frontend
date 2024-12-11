@@ -3,7 +3,6 @@ import { NgbDate, NgbDateParserFormatter } from '@ng-bootstrap/ng-bootstrap';
 import { BehaviorSubject, Observable, Subject, catchError, debounceTime, map, shareReplay, switchMap, tap, throwError } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { CustomerPayment } from 'src/app/models/customer/customer-payment';
-import { Invoice } from 'src/app/models/invoice/invoice';
 import { SortColumn, SortDirection } from 'src/app/directives/sortable/sortable.directive';
 import { DateRangeService } from '../date-range/date-range.service';
 import { CustomerUsage } from 'src/app/models/customer/customer-usage';
@@ -22,7 +21,7 @@ interface PaymentSearchResult {
 }
 
 interface ListState {
-  id: number;
+  customerId: number;
   page: number;
   limit: number;
   searchList: string;
@@ -49,10 +48,18 @@ export class CustomerDetailService {
   private _paymentTotal$ = new BehaviorSubject<number>(0);
 
   private _customerUsageSearch$ = new Subject<void>();
-  private _customerUsage$ = new BehaviorSubject<CustomerUsage>({ totalCustomerInvoice: 0, totalCustomerPayment: 0, totalItemCount: 0, totalStockInvoice: 0});
+  private _customerUsage$ = new BehaviorSubject<CustomerUsage>({
+    totalCustomerInvoice: 0,
+    totalCustomerPayment: 0,
+    totalItemCount: 0,
+    totalStockInvoice: 0,
+    totalCommission: 0,
+    totalLeftAmount: 0,
+    totalBillClearedAmount: 0
+  });
 
   private _listState: ListState = {
-    id: 0,
+    customerId: 0,
     page: 1,
     limit: 15,
     searchList: '',
@@ -79,7 +86,7 @@ export class CustomerDetailService {
         this._invoiceTotal$.next(result.total);
       });
 
-      this._paymentListSearch$
+    this._paymentListSearch$
       .pipe(
         tap(() => this._paymentListLoading$.next(true)),
         debounceTime(200),
@@ -91,7 +98,7 @@ export class CustomerDetailService {
         this._paymentTotal$.next(result.total);
       });
 
-      this._customerUsageSearch$
+    this._customerUsageSearch$
       .pipe(
         debounceTime(200),
         switchMap(() => this._usageSearch())
@@ -117,7 +124,7 @@ export class CustomerDetailService {
     return this._paymentTotal$.asObservable();
   }
 
-  get customerUsage() {
+  get customerUsage$() {
     return this._customerUsage$.asObservable();
   }
 
@@ -125,8 +132,8 @@ export class CustomerDetailService {
     return this._invoiceListLoading$.asObservable();
   }
 
-  get id() {
-    return this._listState.id;
+  get customerId() {
+    return this._listState.customerId;
   }
 
   get page() {
@@ -149,8 +156,8 @@ export class CustomerDetailService {
     return this._listState.toDate;
   }
 
-  set id(id: number) {
-    this._set({ id });
+  set customerId(customerId: number) {
+    this._set({ customerId });
   }
 
   set page(page: number) {
@@ -174,12 +181,25 @@ export class CustomerDetailService {
   }
 
   set fromDate(fromDate: NgbDate | null) {
-    if (!fromDate) return;
-    this._set({ fromDate });
+    if (!fromDate) {
+      return; // Exit early if fromDate is null
+    }
+
+    // Update state only if toDate is already set
+    if (this.toDate && this.customerId > 0) {
+      this._set({ fromDate });
+    }
+
+    // Always update the internal list state
+    this._listState.fromDate = fromDate;
   }
 
   set toDate(toDate: NgbDate | null) {
-    if (!toDate) return;
+    if (!toDate || this.customerId === 0) {
+      return; // Exit early if `toDate` is null or the `customerId` is invalid
+    }
+
+    // Update the internal state with the new `toDate`
     this._set({ toDate });
   }
 
@@ -191,10 +211,10 @@ export class CustomerDetailService {
   }
 
   private _invoiceSearch(): Observable<InvoiceSearchResult> {
-    if (this.id === 0) {      
-      this.handleError('Customer id is invalid.')
+    if (this.customerId === 0) {
+      this.handleError('Customer customerId is invalid.')
     }
-    
+
     const options = {
       params: new HttpParams()
         .set('search', this._listState.searchList)
@@ -206,7 +226,7 @@ export class CustomerDetailService {
         .append('direction', this._listState.sortDirection),
     };
 
-    return this.http.get<any>(`api/v1/customer/${this.id}/invoice-detail`, options).pipe(
+    return this.http.get<any>(`api/v1/customer/${this.customerId}/invoice-detail`, options).pipe(
       catchError(this.handleError),
       shareReplay(1),
       map((res) => {
@@ -216,8 +236,8 @@ export class CustomerDetailService {
   }
 
   private _paymentSearch(): Observable<PaymentSearchResult> {
-    if (this.id === 0) {      
-      this.handleError('Customer id is invalid.')
+    if (this.customerId === 0) {
+      this.handleError('Customer customerId is invalid.')
     }
 
     const options = {
@@ -231,7 +251,7 @@ export class CustomerDetailService {
         .append('direction', this._listState.sortDirection),
     };
 
-    return this.http.get<any>(`api/v1/customer/${this.id}/payment`, options).pipe(
+    return this.http.get<any>(`api/v1/customer/${this.customerId}/payment`, options).pipe(
       catchError(this.handleError),
       shareReplay(1),
       map((res) => {
@@ -241,8 +261,8 @@ export class CustomerDetailService {
   }
 
   private _usageSearch(): Observable<CustomerUsage> {
-    if (this.id === 0) {
-      this.handleError('Customer id is invalid.');
+    if (this.customerId === 0) {
+      this.handleError('Customer customerId is invalid.');
     }
 
     const options = {
@@ -253,7 +273,7 @@ export class CustomerDetailService {
     };
 
     return this.http
-      .get<any>(`api/v1/customer/${this.id}/usage`, options)
+      .get<any>(`api/v1/customer/${this.customerId}/usage`, options)
       .pipe(
         catchError(this.handleError),
         shareReplay(1),
@@ -267,7 +287,7 @@ export class CustomerDetailService {
       .append('toDate', this.formatter.format(this._listState.toDate));
 
     return this.http
-      .get(`api/v1/customer/${this.id}/usage/export`, {
+      .get(`api/v1/customer/${this.customerId}/usage/export`, {
         params: params,
         observe: 'response',
         responseType: 'blob',

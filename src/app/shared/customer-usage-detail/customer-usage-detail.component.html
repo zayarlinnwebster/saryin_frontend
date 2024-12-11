@@ -1,0 +1,66 @@
+<div class="row">
+    <div class="col-6 mb-3">
+        လွှဲငွေစုစုပေါင်း <span class="float-end">|</span>
+    </div>
+    <div class="col-6 mb-3">
+        <span class="fs-5 fw-semibold">{{ customerUsage.totalCustomerPayment || 0 | number }}</span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6 mb-3">
+        စာရင်းငွေစုစုပေါင်း (နယ်ပို့) <span class="float-end">|</span>
+    </div>
+    <div class="col-6 mb-3">
+        <span span class="fs-5 fw-semibold">{{ customerUsage.totalCustomerInvoice || 0 | number }}</span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6 mb-3">
+        စာရင်းငွေစုစုပေါင်း (လှောင်ကုန်) <span class="float-end">|</span>
+    </div>
+    <div class="col-6 mb-3">
+        <span span class="fs-5 fw-semibold">{{ customerUsage.totalStockInvoice || 0 | number }}</span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6 mb-3">
+        ရှင်းပြီးငွေစုစုပေါင်း <span class="float-end">|</span>
+    </div>
+    <div class="col-6 mb-3">
+        <span span class="fs-5 fw-semibold">{{ customerUsage.totalBillClearedAmount || 0 | number }}</span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6 mb-3">
+        ကော်မရှင်ခ <span class="float-end">|</span>
+    </div>
+    <div class="col-6 mb-3">
+        <span span class="fs-5 fw-semibold">
+            {{
+            customerUsage.totalCommission || 0 | number
+            }}
+        </span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6 mb-3">ကျန်ငွေ<span class="float-end">|</span></div>
+    <div class="col-6 mb-3">
+        <span span class="fs-5 fw-semibold">
+            {{
+            customerUsage.totalLeftAmount || 0 | number
+            }}
+        </span>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6 mb-3">အရေအတွက်စုစုပေါင်း<span class="float-end">|</span></div>
+    <div class="col-6 mb-3">
+        <span span class="fs-5 fw-semibold">{{ customerUsage.totalItemCount || 0 | number:'1.0-0' }}</span>
+    </div>
+</div>

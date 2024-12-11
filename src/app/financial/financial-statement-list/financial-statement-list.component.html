@@ -1,0 +1,108 @@
+<div class="card p-3">
+    <div class="row mb-3">
+        <div class="col-md-3">
+            <div class="mb-3">
+                <input type="text" class="form-control" id="search" placeholder="ရှာဖွေရန်...."
+                    [(ngModel)]="financialStatementService.searchList" [ngModelOptions]="{ standalone: true }" />
+            </div>
+        </div>
+
+        <div class="col-md-3 offset-md-6">
+            <button type="button" class="btn btn-primary float-end" (click)="openCreateItem()">
+                နှစ်ချုပ်စာရင်းအသစ်ဖန်တီးရန်
+            </button>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col" sortable="customerName" (sort)="onSort($event)">
+                        ကုန်သည်အမည်
+                    </th>
+                    <th scope="col" sortable="financialStartDate" (sort)="onSort($event)">
+                        စတင်သည့်ရက်စွဲ
+                    </th>
+                    <th scope="col" sortable="financialEndDate" (sort)="onSort($event)">
+                        ပြီးဆုံးသည့်ရက်စွဲ
+                    </th>
+                    <th scope="col">
+                        လွှဲငွေစုစုပေါင်း
+                    </th>
+                    <th scope="col">
+                        စာရင်းငွေစုစုပေါင်း (နယ်ပို့)
+                    </th>
+                    <th scope="col">
+                        စာရင်းငွေစုစုပေါင်း (လှောင်ကုန်)
+                    </th>
+                    <th scope="col">
+                        ရှင်းပြီးငွေစုစုပေါင်း
+                    </th>
+                    <th scope="col">
+                        ကော်မရှင်ခ
+                    </th>
+                    <th scope="col">
+                        ကျန်ငွေ
+                    </th>
+                    <th scope="col">
+                        အရေအတွက်စုစုပေါင်း
+                    </th>
+                    <th scope="col">
+                        လုပ်ဆောင်ချက်
+                    </th>
+                </tr>
+            </thead>
+
+            <ng-container *ngIf="!(financialStatementService.listLoading$ | async); else loading">
+                <tbody *ngIf="financialStatements$ | async as financialStatements">
+                    <ng-container *ngIf="financialStatements.length > 0; else noData">
+                        <tr *ngFor="let financialStatement of financialStatements; let i = index">
+                            <th scope="row">{{ i + 1 }}</th>
+                            <td>{{ financialStatement.customer?.fullName }}</td>
+                            <td>{{ financialStatement.financialStartDate }}</td>
+                            <td>{{ financialStatement.financialEndDate }}</td>
+                            <td>{{ financialStatement.totalCustomerPayment | number }}</td>
+                            <td>{{ financialStatement.totalCustomerInvoice | number }}</td>
+                            <td>{{ financialStatement.totalStockInvoice | number }}</td>
+                            <td>{{ financialStatement.totalBillClearedAmount | number }}</td>
+                            <td>{{ financialStatement.totalCommission | number }}</td>
+                            <td>{{ financialStatement.totalLeftAmount | number }}</td>
+                            <td>{{ financialStatement.totalItemCount | number }}</td>
+                            <td>
+                                <button type="button " class="btn btn-outline-danger btn-sm me-1"
+                                    (click)="deleteItem(financialStatement.id)">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                                <button type="button " class="btn btn-outline-success btn-sm me-1"
+                                    [routerLink]="['/financial-statements', financialStatement.id]"
+                                    [fragment]="'နယ်ပို့'">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    </ng-container>
+
+                    <ng-template #noData>
+                        <tr emptyRow></tr>
+                    </ng-template>
+                </tbody>
+            </ng-container>
+
+            <ng-template #loading>
+                <tbody loadingRow></tbody>
+            </ng-template>
+        </table>
+    </div>
+
+    <div class="d-flex flex-column flex-md-row justify-content-between p-2">
+        <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="financialStatementService.page"
+            [pageSize]="financialStatementService.limit" [maxSize]="5">
+        </ngb-pagination>
+
+        <ng-select style="width: auto" name="limit" [items]="limitOptions" [bindLabel]="'label'" [bindValue]="'value'"
+            [clearable]="false" [(ngModel)]="financialStatementService.limit">
+        </ng-select>
+    </div>
+</div>

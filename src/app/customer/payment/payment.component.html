@@ -56,6 +56,7 @@
           'is-invalid': customerId.invalid && customerId.touched
         }"
         (change)="onSelectCustomer($event)"
+        [readonly]="!!editCustomerPayment"
         autofocus
       >
       </ng-select>
@@ -156,7 +157,33 @@
         </small>
       </div>
     </div>
+
+    <div class="mb-3">
+      <label for="financialStatementId" class="form-label"
+        >နှစ်ချုပ်စာရင်း</label
+      >
+      <ng-select
+        id="financialStatementId"
+        [loading]="
+          (financialStatementService.dropdownLoading$ | async) ?? false
+        "
+        [items]="dropdownFinancialStatement$ | async"
+        [bindLabel]="'financialPeriod'"
+        [bindValue]="'id'"
+        placeholder="နှစ်ချုပ်စာရင်းရှိပါက ရွေးပါ။"
+        formControlName="financialStatementId"
+        [readonly]="!!editCustomerPayment"
+        [readonly]="!!editCustomerPayment"
+      >
+        <ng-template ng-option-tmp let-item="item">
+          {{ item.financialPeriod }} <br />
+          <small>{{ item.remark }}</small>
+        </ng-template>
+      </ng-select>
+    </div>
   </div>
+
+  {{ customerPaymentForm.value | json }}
 
   <div class="modal-footer">
     <button

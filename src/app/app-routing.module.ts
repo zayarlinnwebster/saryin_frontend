@@ -77,6 +77,16 @@ const routes: Routes = [
         },
       },
       {
+        path: 'financial-statements',
+        loadChildren: () =>
+          import('./financial/financial.module').then(
+            (module) => module.FinancialModule
+          ),
+        data: {
+          title: 'နှစ်ချုပ်စာရင်းများ',
+        },
+      },
+      {
         path: 'users',
         loadChildren: () =>
           import('./user/user.module').then(

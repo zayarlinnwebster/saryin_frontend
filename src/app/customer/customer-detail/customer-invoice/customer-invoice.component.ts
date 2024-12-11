@@ -28,7 +28,6 @@ export class CustomerInvoiceComponent {
   limitOptions: object[] = LIMIT_OPTIONS;
   invoiceDetails$: Observable<InvoiceDetail[]>;
   total$: Observable<number>;
-  isDetailsOpen: boolean[] = [];
 
   alertModalConfig: AlertModalConfig = {
     modalTitle: 'နယ်ပို့စာရင်းပြင်ဆင်ခြင်း။',
@@ -63,10 +62,6 @@ export class CustomerInvoiceComponent {
     modalRef.componentInstance.isSuccess
       .pipe(take(1))
       .subscribe(() => (this.customerDetailService.searchList = ''));
-  }
-
-  toggleDetails(index: number): void {
-    this.isDetailsOpen[index] = !this.isDetailsOpen[index];
   }
 
   onSort({ column, direction }: SortEvent) {

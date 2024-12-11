@@ -1,4 +1,14 @@
 .chart-container {
+  max-width: 100%; /* Optional: limits the width of the chart */
   height: 600px;
   overflow-y: auto;
+  overflow-x: hidden;
+  padding: 10px;
+}
+
+.chart-wrapper {
+  overflow-x: auto; /* Enables horizontal scrolling */
+  -webkit-overflow-scrolling: touch; /* For smoother scrolling on iOS */
+  max-width: 100%; /* Optional: limits the width of the chart */
+  padding: 10px;
 }

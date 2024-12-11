@@ -1,14 +1,8 @@
 <div class="row mb-3">
   <div class="col-md-3">
     <div class="mb-3">
-      <input
-        type="text"
-        class="form-control"
-        id="search"
-        placeholder="ရှာဖွေရန်...."
-        [(ngModel)]="invoiceService.searchList"
-        [ngModelOptions]="{ standalone: true }"
-      />
+      <input type="text" class="form-control" id="search" placeholder="ရှာဖွေရန်...."
+        [(ngModel)]="invoiceService.searchList" [ngModelOptions]="{ standalone: true }" />
     </div>
   </div>
 
@@ -16,84 +10,43 @@
     <div class="mb-3">
       <div class="dp-hidden position-absolute">
         <div class="input-group">
-          <input
-            name="datepicker"
-            class="form- control"
-            ngbDatepicker
-            #datepicker="ngbDatepicker"
-            [autoClose]="'outside'"
-            (dateSelect)="invoiceService.onDateSelection($event)"
-            [displayMonths]="2"
-            [dayTemplate]="t"
-            outsideDays="hidden"
-            [startDate]="dateRangeService.fromDate!"
-            tabindex="-1"
-          />
+          <input name="datepicker" class="form- control" ngbDatepicker #datepicker="ngbDatepicker"
+            [autoClose]="'outside'" (dateSelect)="invoiceService.onDateSelection($event)" [displayMonths]="2"
+            [dayTemplate]="t" outsideDays="hidden" [startDate]="dateRangeService.fromDate!" tabindex="-1" />
           <ng-template #t let-date let-focused="focused">
-            <span
-              class="custom-day"
-              [class.focused]="focused"
-              [class.range]="dateRangeService.isRange(date)"
+            <span class="custom-day" [class.focused]="focused" [class.range]="dateRangeService.isRange(date)"
               [class.faded]="
                 dateRangeService.isHovered(date) ||
                 dateRangeService.isInside(date)
-              "
-              (mouseenter)="dateRangeService.hoveredDate = date"
-              (mouseleave)="dateRangeService.hoveredDate = null"
-            >
+              " (mouseenter)="dateRangeService.hoveredDate = date" (mouseleave)="dateRangeService.hoveredDate = null">
               {{ date.day }}
             </span>
           </ng-template>
         </div>
       </div>
       <div class="input-group">
-        <input
-          #dpFromDate
-          class="form-control"
-          placeholder="ရက်စွဲအပိုင်းအခြားကို ရွေးပါ..."
-          name="dpFromDate"
-          [value]="
+        <input #dpFromDate class="form-control" placeholder="ရက်စွဲအပိုင်းအခြားကို ရွေးပါ..." name="dpFromDate" [value]="
             dateRangeService.formatter.format(dateRangeService.fromDate) +
             ' မှ ' +
             dateRangeService.formatter.format(dateRangeService.toDate)
-          "
-          [disabled]="true"
-        />
-        <button
-          class="btn btn-outline-secondary bi bi-calendar3"
-          (click)="datepicker.toggle()"
-          type="button"
-        ></button>
+          " [disabled]="true" />
+        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
       </div>
     </div>
   </div>
 
   <div class="col-md-6">
     <div class="d-flex flex-column flex-md-row justify-content-end">
-      <button
-        class="btn btn-light mb-3 mx-2"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#totalAmount"
-        aria-expanded="false"
-        aria-controls="totalAmount"
-      >
+      <button class="btn btn-light mb-3 mx-2" type="button" data-bs-toggle="collapse" data-bs-target="#totalAmount"
+        aria-expanded="false" aria-controls="totalAmount">
         စုစုပေါင်းစာရင်းကြည့်ရန်
       </button>
 
-      <button
-        class="btn btn-success mb-3 mx-2"
-        type="button"
-        (click)="invoiceService.exportInvoice()"
-      >
+      <button class="btn btn-success mb-3 mx-2" type="button" (click)="invoiceService.exportInvoice()">
         စာရင်းသိမ်းမည်။
       </button>
 
-      <button
-        type="button"
-        class="btn btn-primary mb-3 mx-2"
-        (click)="openCreateInvoice()"
-      >
+      <button type="button" class="btn btn-primary mb-3 mx-2" (click)="openCreateInvoice()">
         နယ်ပို့စာရင်းအသစ်ဖန်တီးရန်
       </button>
     </div>
@@ -101,10 +54,8 @@
 </div>
 
 <div class="collapse" id="totalAmount">
-  <div
-    class="d-flex flex-column flex-md-row justify-content-end justify-content-between"
-    *ngIf="totalAmount$ | async as totalAmount"
-  >
+  <div class="d-flex flex-column flex-md-row justify-content-end justify-content-between"
+    *ngIf="totalAmount$ | async as totalAmount">
     <div class="mb-3 d-flex justify-content-between">
       <b class="me-1">စုစုပေါင်းသင့်ငွေ : </b>
       <strong>{{ totalAmount.totalInvoiceAmount | number }}</strong>
@@ -136,42 +87,24 @@
               <th scope="row">{{ i + 1 }}</th>
               <td>{{ invoice.invoiceDate | date : "YYYY-MM-dd" }}</td>
               <td>
-                <a
-                  class="link-dark link-underline link-underline-opacity-0"
-                  [routerLink]="['/customer', invoice.customer?.id]"
-                  [fragment]="'လွှဲငွေ'"
-                  >{{ invoice.customer?.fullName }}</a
-                >
+                <a class="link-dark link-underline link-underline-opacity-0"
+                  [routerLink]="['/customer', invoice.customer?.id]" [fragment]="'နယ်ပို့'">{{
+                  invoice.customer?.fullName }}</a>
               </td>
               <td>
                 {{ invoice.totalAmount | number }}
               </td>
               <td>
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary btn-sm me-1"
-                  (click)="openEditInvoice(invoice)"
-                >
+                <button type="button" class="btn btn-outline-secondary btn-sm me-1" (click)="openEditInvoice(invoice)">
                   <i class="bi bi-pencil-square"></i>
                 </button>
-                <button
-                  type="button"
-                  class="btn btn-outline-danger btn-sm me-1"
-                  (click)="deleteInvoice(invoice.id)"
-                >
+                <button type="button" class="btn btn-outline-danger btn-sm me-1" (click)="deleteInvoice(invoice.id)">
                   <i class="bi bi-trash"></i>
                 </button>
-                <button
-                  type="button"
-                  class="btn btn-outline-primary btn-sm me-1"
-                  (click)="toggleDetails(invoice.id)"
-                >
-                  <i
-                    class="bi"
-                    [ngClass]="
+                <button type="button" class="btn btn-outline-primary btn-sm me-1" (click)="toggleDetails(invoice.id)">
+                  <i class="bi" [ngClass]="
                       detailOpenInvoiceId != invoice.id ? 'bi-eye-slash' : 'bi-eye'
-                    "
-                  ></i>
+                    "></i>
                 </button>
               </td>
             </tr>
@@ -192,27 +125,19 @@
                       <th colspan="100%">စုစုပေါင်းတန်ဖိုး</th>
                     </tr>
                   </thead>
-                  <tbody
-                    *ngIf="
+                  <tbody *ngIf="
                       invoiceDetails$ | async as invoiceDetails;
                       else detailListloading
-                    "
-                  >
-                    <tr
-                      *ngFor="
+                    ">
+                    <tr *ngFor="
                         let invoiceDetail of invoiceDetails;
                         let i = index
-                      "
-                      class="collapse-row"
-                    >
+                      " class="collapse-row">
                       <td scope="row">{{ i + 1 }}</td>
                       <td colspan="2">
-                        <a
-                          class="link-dark link-underline link-underline-opacity-0"
-                          [routerLink]="['/vendor', invoiceDetail.vendor?.id]"
-                          [fragment]="'သွင်းငွေ'"
-                          >{{ invoiceDetail.vendor?.vendorName }}</a
-                        >
+                        <a class="link-dark link-underline link-underline-opacity-0"
+                          [routerLink]="['/vendor', invoiceDetail.vendor?.id]" [fragment]="'နယ်ပို့'">{{
+                          invoiceDetail.vendor?.vendorName }}</a>
                       </td>
                       <td colspan="2">
                         {{ invoiceDetail.item?.itemName }}
@@ -249,23 +174,11 @@
 </div>
 
 <div class="d-flex flex-column flex-md-row justify-content-between p-2">
-  <ngb-pagination
-    [collectionSize]="(total$ | async)!"
-    [(page)]="invoiceService.page"
-    [pageSize]="invoiceService.limit"
-    [maxSize]="5"
-    [hidden]="!invoiceService.limit"
-  >
+  <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="invoiceService.page" [pageSize]="invoiceService.limit"
+    [maxSize]="5" [hidden]="!invoiceService.limit">
   </ngb-pagination>
 
-  <ng-select
-    style="width: auto"
-    name="limit"
-    [items]="limitOptions"
-    [bindLabel]="'label'"
-    [bindValue]="'value'"
-    [clearable]="false"
-    [(ngModel)]="invoiceService.limit"
-  >
+  <ng-select style="width: auto" name="limit" [items]="limitOptions" [bindLabel]="'label'" [bindValue]="'value'"
+    [clearable]="false" [(ngModel)]="invoiceService.limit">
   </ng-select>
 </div>

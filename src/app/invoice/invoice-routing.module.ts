@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { InvoiceListComponent } from './invoices/invoice-list/invoice-list.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 
 const routes: Routes = [

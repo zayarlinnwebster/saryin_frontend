@@ -12,4 +12,5 @@ export interface CustomerPayment {
     customer: Customer;
     remainingAmount: number;
     commission: number;
+    financialStatementId: number
 }

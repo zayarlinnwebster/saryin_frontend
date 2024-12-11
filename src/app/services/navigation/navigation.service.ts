@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { faFile, faFish, faGauge, faPeopleGroup, faStore, faWarehouse } from '@fortawesome/free-solid-svg-icons';
+import { faFile, faFish, faGauge, faPeopleGroup, faStore, faWarehouse, faPaperclip } from '@fortawesome/free-solid-svg-icons';
 import { Navigation } from 'src/app/models/navigation';
 
 const NavigationItems: Navigation[] = [
@@ -7,7 +7,7 @@ const NavigationItems: Navigation[] = [
     id: 'dashboards',
     title: 'ဒက်ရှ်ဘုတ်',
     type: 'item',
-    icon:  faGauge,
+    icon: faGauge,
     url: '/dashboards'
   },
   {
@@ -28,7 +28,8 @@ const NavigationItems: Navigation[] = [
         type: 'item',
         url: '/vendor/payments'
       }
-    ]  },
+    ]
+  },
   {
     id: 'customer',
     title: 'ကုန်သည်',
@@ -84,13 +85,20 @@ const NavigationItems: Navigation[] = [
     url: '/invoices',
     fragment: 'စာရင်း'
   },
+  {
+    id: 'financial-statements',
+    title: 'နှစ်ချုပ်စာရင်းများ',
+    type: 'item',
+    icon: faPaperclip,
+    url: '/financial-statements',
+  },
 ];
 
 @Injectable({
   providedIn: 'root',
 })
 export class NavigationService {
-  constructor() {}
+  constructor() { }
 
   public getNavigationItems() {
     return NavigationItems;

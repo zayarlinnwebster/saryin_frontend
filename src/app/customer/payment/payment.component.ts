@@ -11,9 +11,11 @@ import { Observable } from 'rxjs';
 import { transformFormData } from 'src/app/core/utils/form-utils';
 import { Customer } from 'src/app/models/customer/customer';
 import { CustomerPayment } from 'src/app/models/customer/customer-payment';
+import { FinancialStatement } from 'src/app/models/financial/financial-statement';
 import { AlertModalService } from 'src/app/services/alert-modal/alert-modal.service';
 import { CustomerPaymentService } from 'src/app/services/customer-payment/customer-payment.service';
 import { CustomerService } from 'src/app/services/customer/customer.service';
+import { FinancialStatementService } from 'src/app/services/financial/financial-statement.service';
 import { AlertModalConfig } from 'src/app/shared/alert-modal/alert-modal.config';
 import { PAID_TYPES } from 'src/app/shared/constants';
 
@@ -23,12 +25,13 @@ import { PAID_TYPES } from 'src/app/shared/constants';
   styleUrls: ['./payment.component.css'],
 })
 export class PaymentComponent implements OnInit {
-  @Input()
-  editCustomerPayment!: CustomerPayment;
+  @Input() editCustomerPayment!: CustomerPayment;
+
   paidTypes: string[] = PAID_TYPES;
-  remainingAmount: number = 0;
+  remainingAmount = 0;
 
   dropdownCustomers$: Observable<Customer[]>;
+  dropdownFinancialStatement$: Observable<FinancialStatement[]>;
 
   customerPaymentForm: FormGroup;
 
@@ -41,24 +44,30 @@ export class PaymentComponent implements OnInit {
     public activeModal: NgbActiveModal,
     public customerPaymentService: CustomerPaymentService,
     public customerService: CustomerService,
-    private _formBuilder: FormBuilder,
-    private _alertModalService: AlertModalService
+    public financialStatementService: FinancialStatementService,
+    private formBuilder: FormBuilder,
+    private alertModalService: AlertModalService
   ) {
-    this.dropdownCustomers$ = customerService.dropdownCustomers$;
-    customerService.dropdownSearch$.next('');
+    this.dropdownCustomers$ = this.customerService.dropdownCustomers$;
+    this.dropdownFinancialStatement$ = this.financialStatementService.dropdownFinancialStatements$;
+    this.customerService.dropdownSearch$.next('');
 
-    this.customerPaymentForm = this._formBuilder.group({
+    this.customerPaymentForm = this.formBuilder.group({
       paymentDate: [new Date(), Validators.required],
       paidAmount: ['', [Validators.required, Validators.min(0)]],
       paidBy: ['Cash', Validators.required],
       transactionNo: [''],
       commission: ['', [Validators.required, Validators.min(0)]],
       customerId: [null, Validators.required],
+      financialStatementId: [null],
     });
 
-    this._alertModalService.setAlertModalConfig(this.alertModalConfig);
+    this.alertModalService.setAlertModalConfig(this.alertModalConfig);
   }
 
+  get formControls() {
+    return this.customerPaymentForm.controls;
+  }
   get paymentDate(): AbstractControl {
     return this.customerPaymentForm.get('paymentDate') as FormControl;
   }
@@ -83,7 +92,22 @@ export class PaymentComponent implements OnInit {
     return this.customerPaymentForm.get('commission') as FormControl;
   }
 
-  ngOnInit() {
+  get financialStatementId(): AbstractControl {
+    return this.customerPaymentForm.get('financialStatementId') as FormControl;
+  }
+
+  ngOnInit(): void {
+    this.handleCustomerIdChanges();
+    this.initializeEditMode();
+  }
+
+  private handleCustomerIdChanges(): void {
+    this.customerId.valueChanges.subscribe((customerId) => {
+      this.financialStatementService.customerId$.next(customerId);
+    });
+  }
+
+  private initializeEditMode(): void {
     if (this.editCustomerPayment) {
       this.customerPaymentForm.patchValue({
         paymentDate: new Date(this.editCustomerPayment.paymentDate),
@@ -92,23 +116,15 @@ export class PaymentComponent implements OnInit {
         transactionNo: this.editCustomerPayment.transactionNo,
         customerId: this.editCustomerPayment.customerId,
         commission: this.editCustomerPayment.commission,
+        financialStatementId: this.editCustomerPayment.financialStatementId,
       });
 
       this.onSelectCustomer({
-        ...this.editCustomerPayment,
+        totalInvoiceAmount: this.editCustomerPayment.totalInvoiceAmount,
+        totalPaidAmount: this.editCustomerPayment.totalPaidAmount,
         commission: this.editCustomerPayment.customer.commission,
       });
     }
-
-    this.paidBy.valueChanges.subscribe((value) => {
-      if (value === 'Cash') {
-        this.transactionNo.clearValidators(); // Remove any existing validators
-      } else {
-        this.transactionNo.setValidators([Validators.required]);
-      }
-
-      this.transactionNo.updateValueAndValidity(); // Update the control's validation state
-    });
   }
 
   onSelectCustomer({
@@ -119,56 +135,37 @@ export class PaymentComponent implements OnInit {
     totalInvoiceAmount: number;
     totalPaidAmount: number;
     commission: number;
-  }) {
+  }): void {
     this.commission.setValue(commission);
-
-    if (totalInvoiceAmount || totalPaidAmount) {
-      this.remainingAmount =
-        Number(totalInvoiceAmount) -
-        Number(totalPaidAmount) +
-        (Number(totalInvoiceAmount) * Number(commission)) / 100;
-    } else {
-      this.remainingAmount = 0;
-    }
+    this.remainingAmount = totalInvoiceAmount
+      ? Number(totalInvoiceAmount) -
+      Number(totalPaidAmount) +
+      (Number(totalInvoiceAmount) * commission) / 100
+      : 0;
   }
 
-  onSubmit() {
+  onSubmit(): void {
     if (this.customerPaymentForm.invalid) {
       return;
     }
 
-    const transformedData = transformFormData(this.customerPaymentForm.value);
+    const transformedData = transformFormData(this.customerPaymentForm.getRawValue());
 
-    if (this.editCustomerPayment) {
-      this.customerPaymentService
-        .updateCustomerPayment(this.editCustomerPayment.id, transformedData)
-        .subscribe({
-          next: (res) => {
-            this.activeModal.close();
-            this._alertModalService.open(
-              'ကုန်သည်လွှဲငွေအသစ်သိမ်းဆည်းပြီးပါပြီ။',
-              'success'
-            );
-          },
-          error: (err) => {
-            this._alertModalService.open(err, 'danger');
-          },
-        });
-    } else {
-      this.customerPaymentService
-        .createCustomerPayment(transformedData)
-        .subscribe({
-          next: (res) => {
-            this.activeModal.close();
-            this._alertModalService.open(
-              'ကုန်သည်လွှဲငွေအသစ်သိမ်းဆည်းပြီးပါပြီ။',
-              'success'
-            );
-          },
-          error: (err) => {
-            this._alertModalService.open(err, 'danger');
-          },
-        });
-    }
+    const request = this.editCustomerPayment
+      ? this.customerPaymentService.updateCustomerPayment(
+        this.editCustomerPayment.id,
+        transformedData
+      )
+      : this.customerPaymentService.createCustomerPayment(transformedData);
+
+    request.subscribe({
+      next: () => {
+        this.activeModal.close();
+        this.alertModalService.open('ကုန်သည်လွှဲငွေအသစ်သိမ်းဆည်းပြီးပါပြီ။', 'success');
+      },
+      error: (err) => {
+        this.alertModalService.open(err, 'danger');
+      },
+    });
   }
 }

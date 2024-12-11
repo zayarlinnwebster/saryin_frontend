@@ -1,0 +1,57 @@
+<div class="card p-4 mb-3" *ngIf="financialStatement$ | async as financialStatement; else loading">
+    <!-- Customer and Date Info -->
+    <div class="row">
+        <!-- Customer Name -->
+        <div class="col-md-6">
+            <h4 class="text-primary">{{ financialStatement.customer?.fullName }}</h4>
+        </div>
+        <!-- Date Range -->
+        <div class="col-md-6 text-end">
+            <h5>
+                {{ financialStatement.financialStartDate | date: 'longDate' }}
+                မှ {{ financialStatement.financialEndDate | date: 'longDate' }} ထိ
+            </h5>
+        </div>
+    </div>
+
+    <!-- Divider -->
+    <hr class="my-4">
+
+    <!-- Customer Usage Detail -->
+    <app-customer-usage-detail [customerUsage]="{
+        totalCustomerPayment: financialStatement.totalCustomerPayment,
+        totalCustomerInvoice: financialStatement.totalCustomerInvoice,
+        totalStockInvoice: financialStatement.totalStockInvoice,
+        totalItemCount: financialStatement.totalItemCount,
+        totalCommission: financialStatement.totalCommission,
+        totalLeftAmount: financialStatement.totalLeftAmount,
+        totalBillClearedAmount: financialStatement.totalBillClearedAmount
+      }" />
+</div>
+
+<div class="card p-3">
+    <div ngbNav #nav="ngbNav" [activeId]="activeFragment$ | async" class="nav-pills nav-fill mb-3">
+        <ng-container [ngbNavItem]="'နယ်ပို့'">
+            <button ngbNavLink routerLink="." [fragment]="'နယ်ပို့'">
+                နယ်ပို့စာရင်းများ
+            </button>
+            <ng-template ngbNavContent>
+                <app-invoice-detail-table />
+            </ng-template>
+        </ng-container>
+
+        <ng-container [ngbNavItem]="'လွှဲငွေ'">
+            <button ngbNavLink routerLink="." [fragment]="'နယ်ပို့'">
+                လွှဲငွေစာရင်းများ
+            </button>
+            <ng-template ngbNavContent>
+                <app-customer-payment-table />
+            </ng-template>
+        </ng-container>
+    </div>
+    <div [ngbNavOutlet]="nav"></div>
+</div>
+
+<ng-template #loading>
+    <app-loading-center></app-loading-center>
+</ng-template>

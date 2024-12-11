@@ -19,7 +19,7 @@ import {
 } from 'src/app/directives/sortable/sortable.directive';
 import { StockItem } from 'src/app/models/stock-item';
 import { DateRangeService } from '../date-range/date-range.service';
-import { StoreUsage } from 'src/app/modesl/store/store-usage';
+import { StoreUsage } from 'src/app/models/store/store-usage';
 import { environment } from 'src/environments/environment';
 import { StoreItem } from 'src/app/models/store-item';
 import { downloadFile } from 'src/app/core/utils/download-file';

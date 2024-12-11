@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { EMPTY, Observable, Subject, map, switchMap } from 'rxjs';
 import { Store } from 'src/app/models/store';
-import { StoreUsage } from 'src/app/modesl/store/store-usage';
+import { StoreUsage } from 'src/app/models/store/store-usage';
 import { DateRangeService } from 'src/app/services/date-range/date-range.service';
 import { StoreDetailService } from 'src/app/services/store-detail/store-detail.service';
 import { StoreService } from 'src/app/services/store/store.service';
@@ -27,8 +27,8 @@ export class StoreDetailComponent {
   ) {
     this.dateRangeService.fromDate = storeDetailService.fromDate;
     this.dateRangeService.toDate = storeDetailService.toDate
-    ;
-    
+      ;
+
     this.activeFragment$ = this.route.fragment.pipe(
       map(fragment => fragment ? decodeURIComponent(fragment) : '')
     );
@@ -45,7 +45,7 @@ export class StoreDetailComponent {
     this.storeUsage$ = this.storeDetailService.storeUsage;
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   ngOnDestroy(): void {
     this.destroy$.next(true);

@@ -7,7 +7,6 @@ import {
   Subject,
   catchError,
   debounceTime,
-  distinctUntilChanged,
   finalize,
   map,
   shareReplay,
@@ -77,6 +76,8 @@ export class InvoiceService {
         tap(() => this._listLoading$.next(false))
       )
       .subscribe((result) => {
+        console.log(result);
+
         this._invoices$.next(result.invoices);
         this._total$.next(result.total);
         this._totalAmount$.next(result.totalAmount);
@@ -145,6 +146,8 @@ export class InvoiceService {
   }
 
   set toDate(toDate: NgbDate | null) {
+    console.log(toDate);
+
     if (!toDate) return;
     this._set({ toDate });
   }

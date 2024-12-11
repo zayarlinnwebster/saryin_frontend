@@ -17,7 +17,7 @@ export class DateRangeService {
   constructor(
     private calendar: NgbCalendar,
     public formatter: NgbDateParserFormatter
-  ) {}
+  ) { }
 
   get fromDate() {
     return this._fromDate;
@@ -31,8 +31,13 @@ export class DateRangeService {
     return new Date();
   }
 
+  // First date of the current month
   get monthFirstDate(): NgbDate {
-    var firstDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), 1);
+    const firstDay = new Date(
+      this.currentDate.getFullYear(),
+      this.currentDate.getMonth(),
+      1
+    );
 
     return <NgbDate>{
       day: firstDay.getDate(),
@@ -41,13 +46,40 @@ export class DateRangeService {
     };
   }
 
+  // Last date of the current month
   get monthLastDate(): NgbDate {
-    const lastDay = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth() + 1, 0);
+    const lastDay = new Date(
+      this.currentDate.getFullYear(),
+      this.currentDate.getMonth() + 1,
+      0
+    );
 
     return <NgbDate>{
       day: lastDay.getDate(),
       month: lastDay.getMonth() + 1,
       year: lastDay.getFullYear(),
+    };
+  }
+
+  // First date of the current year
+  get yearFirstDate(): NgbDate {
+    const firstDayOfYear = new Date(this.currentDate.getFullYear(), 0, 1);
+
+    return <NgbDate>{
+      day: firstDayOfYear.getDate(),
+      month: firstDayOfYear.getMonth() + 1,
+      year: firstDayOfYear.getFullYear(),
+    };
+  }
+
+  // Last date of the current year
+  get yearLastDate(): NgbDate {
+    const lastDayOfYear = new Date(this.currentDate.getFullYear(), 11, 31);
+
+    return <NgbDate>{
+      day: lastDayOfYear.getDate(),
+      month: lastDayOfYear.getMonth() + 1,
+      year: lastDayOfYear.getFullYear(),
     };
   }
 

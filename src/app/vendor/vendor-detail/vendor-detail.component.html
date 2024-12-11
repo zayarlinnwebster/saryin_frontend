@@ -4,14 +4,8 @@
     <div class="row">
       <div class="col-md-3">
         <div class="mb-3">
-          <input
-            type="text"
-            class="form-control"
-            id="search"
-            placeholder="ရှာဖွေရန်...."
-            [(ngModel)]="vendorDetailService.searchList"
-            [ngModelOptions]="{ standalone: true }"
-          />
+          <input type="text" class="form-control" id="search" placeholder="ရှာဖွေရန်...."
+            [(ngModel)]="vendorDetailService.searchList" [ngModelOptions]="{ standalone: true }" />
         </div>
       </div>
 
@@ -19,70 +13,42 @@
         <div class="mb-3">
           <div class="dp-hidden position-absolute">
             <div class="input-group">
-              <input
-                name="datepicker"
-                class="form-control"
-                ngbDatepicker
-                #datepicker="ngbDatepicker"
-                [autoClose]="'outside'"
-                (dateSelect)="vendorDetailService.onDateSelection($event)"
-                [displayMonths]="2"
-                [dayTemplate]="t"
-                outsideDays="hidden"
-                [startDate]="dateRangeService.fromDate!"
-                tabindex="-1"
-              />
+              <input name="datepicker" class="form-control" ngbDatepicker #datepicker="ngbDatepicker"
+                [autoClose]="'outside'" (dateSelect)="vendorDetailService.onDateSelection($event)" [displayMonths]="2"
+                [dayTemplate]="t" outsideDays="hidden" [startDate]="dateRangeService.fromDate!" tabindex="-1" />
               <ng-template #t let-date let-focused="focused">
-                <span
-                  class="custom-day"
-                  [class.focused]="focused"
-                  [class.range]="dateRangeService.isRange(date)"
+                <span class="custom-day" [class.focused]="focused" [class.range]="dateRangeService.isRange(date)"
                   [class.faded]="
                     dateRangeService.isHovered(date) ||
                     dateRangeService.isInside(date)
-                  "
-                  (mouseenter)="dateRangeService.hoveredDate = date"
-                  (mouseleave)="dateRangeService.hoveredDate = null"
-                >
+                  " (mouseenter)="dateRangeService.hoveredDate = date"
+                  (mouseleave)="dateRangeService.hoveredDate = null">
                   {{ date.day }}
                 </span>
               </ng-template>
             </div>
           </div>
           <div class="input-group">
-            <input
-              #dpFromDate
-              class="form-control"
-              placeholder="ရက်စွဲအပိုင်းအခြားကို ရွေးပါ..."
-              name="dpFromDate"
+            <input #dpFromDate class="form-control" placeholder="ရက်စွဲအပိုင်းအခြားကို ရွေးပါ..." name="dpFromDate"
               [value]="
                 dateRangeService.formatter.format(dateRangeService.fromDate) +
                 ' မှ ' +
                 dateRangeService.formatter.format(dateRangeService.toDate)
-              "
-              [disabled]="true"
-            />
-            <button
-              class="btn btn-outline-secondary bi bi-calendar3"
-              (click)="datepicker.toggle()"
-              type="button"
-            ></button>
+              " [disabled]="true" />
+            <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()"
+              type="button"></button>
           </div>
         </div>
       </div>
 
       <div class="col-md-6">
         <div class="d-flex flex-column flex-md-row justify-content-end">
-          <button
-            class="btn btn-success mb-3 mx-2"
-            type="button"
-            (click)="vendorDetailService.exportVendorDetail()"
-          >
+          <button class="btn btn-success mb-3 mx-2" type="button" (click)="vendorDetailService.exportVendorDetail()">
             စာရင်းသိမ်းမည်။
           </button>
         </div>
       </div>
-    
+
     </div>
   </div>
 </div>
@@ -134,14 +100,14 @@
           <div class="col-6 mb-3">
             <b>{{
               vendorUsage.totalVendorInvoice - vendorUsage.totalVendorPayment
-                | number
-            }}</b>
+              | number
+              }}</b>
           </div>
         </div>
 
         <div class="row">
           <div class="col-6 mb-3">
-            ရှင်းပြီးငွေစုစုပေါင်း  <span class="float-end">|</span>
+            ရှင်းပြီးငွေစုစုပေါင်း <span class="float-end">|</span>
           </div>
           <div class="col-6 mb-3">
             <b>{{ vendorUsage.totalBillClearedVendorInvoice || 0 | number }}</b>
@@ -162,27 +128,22 @@
 </div>
 
 <div class="card p-3">
-  <div
-    ngbNav
-    #nav="ngbNav"
-    [activeId]="activeFragment$ | async"
-    class="nav-pills nav-fill mb-3"
-  >
-    <ng-container [ngbNavItem]="'သွင်းငွေ'">
-      <button ngbNavLink routerLink="." [fragment]="'သွင်းငွေ'">
-        သွင်းငွေစာရင်းများ
-      </button>
-      <ng-template ngbNavContent>
-        <app-vendor-payment></app-vendor-payment>
-      </ng-template>
-    </ng-container>
-
+  <div ngbNav #nav="ngbNav" [activeId]="activeFragment$ | async" class="nav-pills nav-fill mb-3">
     <ng-container [ngbNavItem]="'နယ်ပို့'">
       <button ngbNavLink routerLink="." [fragment]="'နယ်ပို့'">
         နယ်ပို့စာရင်းများ
       </button>
       <ng-template ngbNavContent>
         <app-vendor-invoice></app-vendor-invoice>
+      </ng-template>
+    </ng-container>
+
+    <ng-container [ngbNavItem]="'သွင်းငွေ'">
+      <button ngbNavLink routerLink="." [fragment]="'နယ်ပို့'">
+        သွင်းငွေစာရင်းများ
+      </button>
+      <ng-template ngbNavContent>
+        <app-vendor-payment></app-vendor-payment>
       </ng-template>
     </ng-container>
   </div>

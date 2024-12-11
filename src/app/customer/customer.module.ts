@@ -13,7 +13,15 @@ import { CustomerPaymentComponent } from './customer-detail/customer-payment/cus
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
-  declarations: [CustomerListComponent, CustomerComponent, PaymentListComponent, PaymentComponent, CustomerDetailComponent, CustomerInvoiceComponent, CustomerPaymentComponent],
+  declarations: [
+    CustomerListComponent,
+    CustomerComponent,
+    PaymentListComponent,
+    PaymentComponent,
+    CustomerDetailComponent,
+    CustomerInvoiceComponent,
+    CustomerPaymentComponent
+  ],
   imports: [
     CommonModule,
     CustomerRoutingModule,
@@ -21,4 +29,4 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
     NgbNavModule
   ],
 })
-export class CustomerModule {}
+export class CustomerModule { }

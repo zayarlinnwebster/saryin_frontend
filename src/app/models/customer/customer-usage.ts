@@ -3,4 +3,7 @@ export interface CustomerUsage {
   totalCustomerInvoice: number;
   totalStockInvoice: number;
   totalItemCount: number;
+  totalCommission: number;
+  totalLeftAmount: number;
+  totalBillClearedAmount: number;
 }

@@ -24,9 +24,7 @@
       </tr>
     </thead>
 
-    <ng-container
-      *ngIf="!(storeDetailService.stockItemListLoading | async); else loading"
-    >
+    <ng-container *ngIf="!(storeDetailService.stockItemListLoading | async); else loading">
       <tbody *ngIf="stockItems$ | async as stockItems">
         <ng-container *ngIf="stockItems.length > 0; else noStockItemData">
           <ng-container *ngFor="let stockItem of stockItems; let i = index">
@@ -34,12 +32,9 @@
               <th scope="row">{{ i + 1 }}</th>
               <td>{{ stockItem.storedDate | date : "YYYY-MM-dd" }}</td>
               <td>
-                <a
-                  class="link-dark link-underline link-underline-opacity-0"
-                  [routerLink]="['/customer', stockItem.customer?.id]"
-                  [fragment]="'လွှဲငွေ'"
-                  >{{ stockItem.customer?.fullName }}</a
-                >
+                <a class="link-dark link-underline link-underline-opacity-0"
+                  [routerLink]="['/customer', stockItem.customer?.id]" [fragment]="'နယ်ပို့'">{{
+                  stockItem.customer?.fullName }}</a>
               </td>
               <td>{{ stockItem.item?.itemName }}</td>
               <td>{{ stockItem.marLaKar }}</td>
@@ -57,42 +52,26 @@
                   {{ stockItem.qty - (stockItem.totalQtyOut || 0) | number }}
                   /
                   {{
-                    stockItem.weight - (stockItem.totalWeightOut || 0)
-                      | number : "1.1-2"
+                  stockItem.weight - (stockItem.totalWeightOut || 0)
+                  | number : "1.1-2"
                   }}
                 </b>
               </td>
               <td>{{ stockItem.totalPrice | number }}</td>
               <td>
-                <button
-                  type="button"
-                  class="btn btn-outline-secondary btn-sm me-1"
-                  (click)="openEditStockItem(stockItem)"
-                >
+                <button type="button" class="btn btn-outline-secondary btn-sm me-1"
+                  (click)="openEditStockItem(stockItem)">
                   <i class="bi bi-pencil-square"></i>
                 </button>
-                <button
-                  type="button"
-                  class="btn btn-outline-danger btn-sm me-1"
-                  (click)="deleteStockItem(stockItem.id)"
-                >
+                <button type="button" class="btn btn-outline-danger btn-sm me-1"
+                  (click)="deleteStockItem(stockItem.id)">
                   <i class="bi bi-trash"></i>
                 </button>
-                <button
-                  type="button"
-                  class="btn btn-outline-primary btn-sm me-1"
-                  (click)="toggleDetails(i)"
-                >
-                  <i
-                    class="bi"
-                    [ngClass]="!isDetailsOpen[i] ? 'bi-eye-slash' : 'bi-eye'"
-                  ></i>
+                <button type="button" class="btn btn-outline-primary btn-sm me-1" (click)="toggleDetails(i)">
+                  <i class="bi" [ngClass]="!isDetailsOpen[i] ? 'bi-eye-slash' : 'bi-eye'"></i>
                 </button>
-                <button
-                  type="button"
-                  class="btn btn-outline-success btn-sm me-1"
-                  (click)="openCreateStockItemOut(stockItem)"
-                >
+                <button type="button" class="btn btn-outline-success btn-sm me-1"
+                  (click)="openCreateStockItemOut(stockItem)">
                   <i class="bi bi-journal-minus"></i>
                 </button>
               </td>
@@ -113,15 +92,11 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <ng-container
-                      *ngIf="stockItem.outItems.length > 0; else noStockItemOutData"
-                    >
-                      <ng-container
-                        *ngFor="
+                    <ng-container *ngIf="stockItem.outItems.length > 0; else noStockItemOutData">
+                      <ng-container *ngFor="
                           let stockItemOut of stockItem.outItems;
                           let i = index
-                        "
-                      >
+                        ">
                         <tr class="collapse-row">
                           <td scope="row">#</td>
                           <td colspan="2">
@@ -136,25 +111,18 @@
                           </td>
                           <td>
                             {{ stockItemOut.commission | number : "1.1-2" }} %
-                          </td> 
+                          </td>
                           <td>
                             {{ stockItemOut.totalPrice | number }}
                           </td>
                           <td>
-                            <button
-                              type="button"
-                              class="btn btn-outline-secondary btn-sm me-1"
-                              (click)="
+                            <button type="button" class="btn btn-outline-secondary btn-sm me-1" (click)="
                                 openEditStockItemOut(stockItem, stockItemOut)
-                              "
-                            >
+                              ">
                               <i class="bi bi-pencil-square"></i>
                             </button>
-                            <button
-                              type="button"
-                              class="btn btn-outline-danger btn-sm me-1"
-                              (click)="deleteStockItemOut(stockItemOut.id)"
-                            >
+                            <button type="button" class="btn btn-outline-danger btn-sm me-1"
+                              (click)="deleteStockItemOut(stockItemOut.id)">
                               <i class="bi bi-trash"></i>
                             </button>
                           </td>
@@ -185,22 +153,11 @@
 </div>
 
 <div class="d-flex flex-column flex-md-row justify-content-between p-2">
-  <ngb-pagination
-    [collectionSize]="(total$ | async)!"
-    [(page)]="stockItemService.page"
-    [pageSize]="stockItemService.limit"
-    [maxSize]="5"
-  >
+  <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="stockItemService.page"
+    [pageSize]="stockItemService.limit" [maxSize]="5">
   </ngb-pagination>
 
-  <ng-select
-    style="width: auto"
-    name="limit"
-    [items]="limitOptions"
-    [bindLabel]="'label'"
-    [bindValue]="'value'"
-    [clearable]="false"
-    [(ngModel)]="stockItemService.limit"
-  >
+  <ng-select style="width: auto" name="limit" [items]="limitOptions" [bindLabel]="'label'" [bindValue]="'value'"
+    [clearable]="false" [(ngModel)]="stockItemService.limit">
   </ng-select>
 </div>

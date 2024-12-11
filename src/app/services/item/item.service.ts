@@ -170,7 +170,7 @@ export class ItemService {
 
   private _dropdownSearch(search: string): Observable<[]> {
     const options = {
-      params: new HttpParams().set('search', search).append('limit', 300),
+      params: new HttpParams().set('search', search).append('limit', 1000),
     };
 
     return this.http.get<any>(`api/v1/dropdown/item`, options).pipe(

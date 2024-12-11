@@ -1,0 +1,129 @@
+<div class="modal-header">
+    <h5 class="modal-title">နှစ်ချုပ်စာရင်းအသစ် သိမ်းဆည်းပါ။</h5>
+    <div>
+        <button type="button" class="btn" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+            <i class="bi bi-x-lg"></i>
+        </button>
+    </div>
+</div>
+<form [formGroup]="financialStatementForm" (ngSubmit)="onSubmit()">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="mb-3">
+                    <label for="customerId" class="form-label">ကုန်သည်အမည်</label>
+                    <ng-select id="customerId" [loading]="(customerService.dropdownLoading$ | async) ?? false"
+                        [items]="dropdownCustomers$ | async" [bindLabel]="'fullName'" [bindValue]="'id'"
+                        placeholder="ကုန်သည်အမည်ကို ရွေးပါ။" [typeahead]="customerService.dropdownSearch$"
+                        formControlName="customerId" [ngClass]="{
+                'is-invalid': customerId.invalid && customerId.touched
+              }" autofocus>
+                    </ng-select>
+                    <div *ngIf="customerId.invalid && customerId.touched" id="customerId" class="invalid-feedback">
+                        <small *ngIf="customerId.hasError('required')">
+                            ကုန်သည်အမည်ရွေးရန်လိုအပ်ပါတယ်။
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="mb-3">
+                    <label for="remark" class="form-label">မှတ်ချက်</label>
+                    <textarea class="form-control" id="remark" formControlName="remark"
+                        placeholder="မှတ်ချက်ထည့်သွင်းပါ။" rows="4" cols="50">
+                    </textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-lg-6">
+                <div class="mb-3">
+                    <label for="financialStartDate" class="form-label">စတင်သည့်ရက်စွဲ</label>
+                    <div class="input-group">
+                        <input class="form-control" placeholder="စတင်သည့်ရက်စွဲကို ရွေးချယ်ပါ" name="financialStartDate"
+                            ngbDatepicker #financialStartDatePicker="ngbDatepicker" formControlName="financialStartDate"
+                            [ngClass]="{
+                  'is-invalid': financialStartDate.invalid && financialStartDate.touched
+                }" />
+                        <button class="btn btn-outline-secondary bi bi-calendar3"
+                            (click)="financialStartDatePicker.toggle()" type="button"></button>
+
+                        <div *ngIf="financialStartDate.invalid && financialStartDate.touched" id="financialStartDate"
+                            class="invalid-feedback">
+                            <small *ngIf="financialStartDate.hasError('required')">
+                                ရက်စွဲဖြည့်ရန်လိုအပ်ပါတယ်။
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                <div class="mb-3">
+                    <label for="financialEndDate" class="form-label">ပြီးဆုံးသည့်ရက်စွဲ</label>
+                    <div class="input-group">
+                        <input class="form-control" placeholder="ပြီးဆုံးသည့်ရက်စွဲ ရွေးချယ်ပါ" name="financialEndDate"
+                            ngbDatepicker #financialEndDatePicker="ngbDatepicker" formControlName="financialEndDate"
+                            [ngClass]="{
+                    'is-invalid': financialEndDate.invalid && financialEndDate.touched
+                  }" />
+                        <button class="btn btn-outline-secondary bi bi-calendar3"
+                            (click)="financialEndDatePicker.toggle()" type="button"></button>
+
+                        <div *ngIf="financialEndDate.invalid && financialEndDate.touched" id="financialEndDate"
+                            class="invalid-feedback">
+                            <small *ngIf="financialEndDate.hasError('required')">
+                                ရက်စွဲဖြည့်ရန်လိုအပ်ပါတယ်။
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mb-3 p-3" *ngIf="customer$ | async as selectedCustomer">
+            <app-customer-usage-detail [customerUsage]="customerUsage" />
+        </div>
+
+        <span class="text-warning fs-6">ကုန်သည်အမည် နှင့် ရက်စွဲဖြည့်သွင်းမှသာ စာရင်းများပေါ်ပါမည်။</span>
+
+        <div ngbNav #nav="ngbNav" [activeId]="'invoice-list'" class="nav-tabs my-3">
+            <ng-container [ngbNavItem]="'invoice-list'">
+                <button ngbNavLink>
+                    နယ်ပို့စာရင်း
+                </button>
+                <ng-template ngbNavContent>
+                    <app-financial-invoice-list />
+                </ng-template>
+            </ng-container>
+
+            <ng-container [ngbNavItem]="'payment-list'">
+                <button ngbNavLink>
+                    လွှဲငွေ
+                </button>
+                <ng-template ngbNavContent>
+                    <app-financial-payment-list />
+                </ng-template>
+            </ng-container>
+
+        </div>
+
+        <div [ngbNavOutlet]="nav"></div>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline-dark" (click)="activeModal.dismiss('Cross click')">
+            ပိတ်မည်။
+        </button>
+        <button *ngIf="!(financialStatementService.createLoading$ | async)" type="submit"
+            class="btn btn-outline-primary" [disabled]="financialStatementForm.invalid">
+            သိမ်းဆည်းမည်။
+        </button>
+        <button *ngIf="financialStatementService.createLoading$ | async" class="btn btn-primary" type="button" disabled>
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            လုပ်ဆောင်နေသည်
+        </button>
+    </div>
+</form>

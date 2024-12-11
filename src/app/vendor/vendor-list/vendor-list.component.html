@@ -3,23 +3,13 @@
     <div class="row mb-3">
       <div class="col-md-3">
         <div class="mb-3">
-          <input
-            type="text"
-            class="form-control"
-            id="search"
-            placeholder="ရှာဖွေရန်...."
-            [(ngModel)]="vendorService.searchList"
-            [ngModelOptions]="{ standalone: true }"
-          />
+          <input type="text" class="form-control" id="search" placeholder="ရှာဖွေရန်...."
+            [(ngModel)]="vendorService.searchList" [ngModelOptions]="{ standalone: true }" />
         </div>
       </div>
 
       <div class="col-md-3 offset-md-6">
-        <button
-          type="button"
-          class="btn btn-primary float-end"
-          (click)="openCreateVendor()"
-        >
+        <button type="button" class="btn btn-primary float-end" (click)="openCreateVendor()">
           ပွဲရုံနာမည်အသစ်ဖန်တီးရန်
         </button>
       </div>
@@ -46,36 +36,21 @@
             <tr *ngFor="let vendor of vendors; let i = index">
               <th scope="row">{{ i + 1 }}</th>
               <td>
-                <a
-                  class="link-dark link-underline link-underline-opacity-0"
-                  [routerLink]="['/vendor', vendor.id]"
-                  [fragment]="'သွင်းငွေ'"
-                  >{{ vendor.vendorName }}</a
-                >
+                <a class="link-dark link-underline link-underline-opacity-0" [routerLink]="['/vendor', vendor.id]"
+                  [fragment]="'နယ်ပို့'">{{ vendor.vendorName }}</a>
               </td>
               <td>{{ vendor.phoneNo || "-" }}</td>
               <td>{{ vendor.address || "-" }}</td>
               <td>
-                <button
-                  type="button me-2"
-                  class="btn btn-outline-secondary btn-sm me-1"
-                  (click)="openEditVendor(vendor)"
-                >
+                <button type="button me-2" class="btn btn-outline-secondary btn-sm me-1"
+                  (click)="openEditVendor(vendor)">
                   <i class="bi bi-pencil-square"></i>
                 </button>
-                <button
-                  type="button "
-                  class="btn btn-outline-danger btn-sm me-1"
-                  (click)="deleteVendor(vendor.id)"
-                >
+                <button type="button " class="btn btn-outline-danger btn-sm me-1" (click)="deleteVendor(vendor.id)">
                   <i class="bi bi-trash"></i>
                 </button>
-                <button
-                  type="button "
-                  class="btn btn-outline-success btn-sm me-1"
-                  [routerLink]="['/vendor', vendor.id]"
-                  [fragment]="'သွင်းငွေ'"
-                >
+                <button type="button " class="btn btn-outline-success btn-sm me-1" [routerLink]="['/vendor', vendor.id]"
+                  [fragment]="'နယ်ပို့'">
                   <i class="bi bi-file-earmark-text"></i>
                 </button>
               </td>
@@ -95,23 +70,12 @@
   </div>
 
   <div class="d-flex flex-column flex-md-row justify-content-between p-2">
-    <ngb-pagination
-      [collectionSize]="(total$ | async)!"
-      [(page)]="vendorService.page"
-      [pageSize]="vendorService.limit"
-      [maxSize]="5"
-    >
+    <ngb-pagination [collectionSize]="(total$ | async)!" [(page)]="vendorService.page" [pageSize]="vendorService.limit"
+      [maxSize]="5">
     </ngb-pagination>
 
-    <ng-select
-      style="width: auto"
-      name="limit"
-      [items]="limitOptions"
-      [bindLabel]="'label'"
-      [bindValue]="'value'"
-      [clearable]="false"
-      [(ngModel)]="vendorService.limit"
-    >
+    <ng-select style="width: auto" name="limit" [items]="limitOptions" [bindLabel]="'label'" [bindValue]="'value'"
+      [clearable]="false" [(ngModel)]="vendorService.limit">
     </ng-select>
   </div>
 </div>
